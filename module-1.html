@@ -62,43 +62,67 @@
       billion-dollar stakes.</div>
 
     <h2>Overfitting: the central trap</h2>
-    <p>I trained decision trees of increasing complexity to predict whether a tumour is benign
-      or malignant. Watch what happens:</p>
-    <pre class="result">tree depth | train acc | test acc | note
-         1 |   92.5%   |  89.5%   | underfit
-         2 |   94.2%   |  93.0%   | underfit
-         3 |   97.0%   |  96.5%   | good balance   &larr; sweet spot
-         5 |   99.5%   |  95.3%   | OVERFIT
-        10 |  100.0%   |  94.2%   | OVERFIT
-      none |  100.0%   |  94.2%   | OVERFIT</pre>
-    <p>That table is the whole lesson:</p>
-    <p><strong>Underfitting</strong> (depth 1–2): the model is too simple — mediocre on both
-      train and test. It hasn't learned enough.</p>
-    <p><strong>The sweet spot</strong> (depth 3): test accuracy peaks. It learned the real
-      pattern.</p>
-    <p><strong>Overfitting</strong> (depth 5+): training accuracy hits a perfect 100% but test
-      accuracy <em>drops</em>. The model memorised the training data — including its noise —
-      instead of learning the general pattern. It aced the questions it studied and flunked the
-      real exam.</p>
+    <p>The best way to feel this is to run it, so I built a tiny experiment on real NYC taxi
+      trips: predict a ride's <strong>fare</strong> from its <strong>distance</strong> and
+      <strong>passenger count</strong>, using decision trees that get steadily more complex
+      (controlled by their <code>max_depth</code>).</p>
+    <p>Because we're predicting a number, we score it with <strong>R²</strong> — read it as "how
+      much of the variation in fare the model explains," where 1.0 is perfect and 0.0 is no
+      better than always guessing the average fare. We check it twice: on <strong>training</strong>
+      rides the model studied, and on <strong>test</strong> rides it has never seen.</p>
+
+    <p>Here's what I got running it on the real data:</p>
+    <pre class="result">depth | train R² | test R²
+  1   |  0.586   |  0.601   underfit — too simple
+  2   |  0.759   |  0.787
+  3   |  0.840   |  0.836
+  5   |  0.884   |  0.875   &larr; test peaks: the sweet spot
+  8   |  0.913   |  0.826   overfitting begins
+ 12   |  0.928   |  0.773
+ none |  0.932   |  0.769   train high, test sagging</pre>
+    <p>Don't take my word for it — run it yourself and you'll get the same numbers (the random
+      seed is fixed):</p>
+
+    <a class="run-btn" href="https://colab.research.google.com/github/viswanathjosyula/ai-from-scratch/blob/main/overfitting.ipynb" target="_blank" rel="noopener">
+      <span class="play">▶</span> Run this yourself in Colab
+    </a>
+    <p class="run-note">No setup — it opens in your browser, press play on each cell.</p>
+
+    <pre><code>import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
+
+# Real NYC taxi trips — a ~6,400-ride sample built into seaborn
+df = sns.load_dataset("taxis").dropna(subset=["distance", "passengers", "fare"])
+
+X = df[["distance", "passengers"]]   # the trip
+y = df["fare"]                       # what we predict (a number)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+for depth in [1, 2, 3, 5, 8, 12, None]:
+    m = DecisionTreeRegressor(max_depth=depth, random_state=42).fit(X_train, y_train)
+    print(depth, m.score(X_train, y_train), m.score(X_test, y_test))</code></pre>
+
+    <p>Run it and watch the two scores pull apart — that gap <em>is</em> overfitting:</p>
+    <p><strong>Shallow tree</strong> (depth 1–2): too simple. It hasn't carved out enough detail
+      to capture the pattern yet — this is <em>underfitting</em>.</p>
+    <p><strong>Middle depth</strong> (around 5): the test score <em>peaks</em> at 0.875. The model
+      has learned the real "longer ride → higher fare" pattern. This is the sweet spot.</p>
+    <p><strong>Deep tree</strong> (depth 8 and beyond): training R² keeps climbing toward 0.93,
+      but test R² <em>drops</em> — all the way down to 0.77. The tree has started memorising
+      individual rides, including their random noise, instead of the general pattern. It does
+      better and better on the trips it studied and worse on new ones.</p>
+    <div class="callout">The best model isn't the most complex one — it's the one at the
+      <b>peak of the test score</b>. Past that point, extra complexity makes a model look smarter
+      on paper and perform worse in reality.</div>
     <p>That train-vs-test gap is what experienced practitioners watch obsessively. In one
       sentence: <strong>too simple is high bias, too complex is high variance, and the job is
       balancing the two.</strong></p>
-
-    <h2>Try it yourself</h2>
-    <pre><code>from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-
-X, y = load_breast_cancer(return_X_y=True)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42)
-
-for depth in [1, 3, 5, 10, None]:
-    m = DecisionTreeClassifier(max_depth=depth, random_state=42).fit(X_train, y_train)
-    print(depth, m.score(X_train, y_train), m.score(X_test, y_test))</code></pre>
-    <p>Run it (<code>pip install scikit-learn</code>), then change <code>test_size</code> to
-      <code>0.5</code> and watch where overfitting kicks in. That tinkering <em>is</em> the
-      learning.</p>
+    <p class="run-note">Want to see it get dramatic? In the notebook, change <code>y = df["fare"]</code>
+      to <code>y = df["tip"]</code>. Tips depend on unpredictable human generosity, so a deep
+      tree's test score can go <em>negative</em> — a model literally worse than guessing the
+      average.</p>
 
     <h2>Interview questions</h2>
     <div class="qa">
