@@ -12,7 +12,7 @@ you can edit it by hand.
 
 ## Before you deploy — fill in 2 placeholders
 In `index.html`, replace:
-- `@yourhandle` and the `https://x.com` link → your real X profile
+- `@IamJosyula` and the `https://x.com` link → your real X profile
 
 ## Deploy to GitHub Pages (~10 min)
 1. Create a new **public** repo on GitHub, e.g. `ai-from-scratch`.
