@@ -19,7 +19,7 @@ In `index.html`, replace:
 3. Repo → **Settings → Pages** → Source: **Deploy from a branch**, branch `main`, folder `/root`. Save.
 4. Tick **Enforce HTTPS** once it becomes available (can take an hour or so).
 
-Your site will be available at `https://yourusername.github.io/ai-from-scratch/`.
+Your site will be available at `https://YOURUSERNAME.github.io/ai-from-scratch/`.
 
 ## Adding a new module later
 Copy `module-2.html` to `module-3.html`, swap in the new content, then in `index.html`
