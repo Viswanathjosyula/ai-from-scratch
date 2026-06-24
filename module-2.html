@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2 — Classic Algorithms | AI from scratch</title>
+<meta name="description" content="Regression, decision trees, random forests, boosting — and why the simplest model often wins.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 02 · Classic Algorithms</p>
+    <h1>The workhorses — and why simple often wins</h1>
+    <p class="stand">Regression, decision trees, random forests and boosting: the models that
+      still dominate real interviews, and a live experiment where the oldest one beat them all.</p>
+  </div>
+
+  <article>
+    <p>Why a future GenAI engineer needs these: structured data is everywhere, interviews test
+      them relentlessly, and every idea here — loss functions, the softmax output — gets
+      inherited by neural networks. Master these and deep learning becomes "the same ideas,
+      scaled up."</p>
+
+    <h2>The two foundations</h2>
+    <p><strong>Linear regression</strong> predicts a <em>number</em>. It fits the straight line
+      of best fit through your data: "given square footage, predict house price." What it's
+      really teaching you — fit a function to data by minimising error — is exactly what neural
+      networks scale to billions of parameters.</p>
+    <p><strong>Logistic regression</strong>, despite the name, predicts a <em>category</em>. It
+      takes the linear output and squashes it through an S-curve into a probability between 0
+      and 1.</p>
+    <div class="callout">This matters enormously: <b>the output layer of every classifier
+      neural network — and an LLM predicting the next token — is essentially massive
+      logistic/softmax regression.</b> Learn it small here, recognise it everywhere later.</div>
+
+    <h2>The tree family</h2>
+    <p><strong>Decision tree</strong> — a flowchart of yes/no questions learned from data.
+      Beautifully interpretable: you can read exactly why it decided. But alone it memorises.</p>
+    <p><strong>Random forest</strong> — train hundreds of slightly different trees and let them
+      <em>vote</em>. This is <strong>bagging</strong>: individual trees overfit in different
+      directions, so averaging cancels the noise. The crowd is wiser than any single tree.</p>
+    <p><strong>Gradient boosting</strong> — build trees <em>sequentially</em>, each one fixing
+      the errors the previous made. This is what XGBoost and LightGBM are, and tuned, they win
+      most tabular-data competitions.</p>
+
+    <h2>The result that teaches the most</h2>
+    <p>I ran all four on the same tumour dataset. Test accuracy on unseen data:</p>
+    <pre class="result">model                 train    test
+Logistic Regression   96.0%   97.7%   &larr; the simplest model WON
+Decision Tree        100.0%   94.2%   &larr; overfit
+Random Forest        100.0%   97.1%
+Gradient Boosting    100.0%   95.9%</pre>
+    <p>Plain logistic regression beat all the fancy ensembles. This is one of the most
+      important practical lessons in ML, and interviewers love to see you understand it:
+      <strong>always try the simple baseline first.</strong> Complex models cost compute,
+      interpretability and tuning effort — and often don't even win. A senior engineer reaches
+      for logistic regression before XGBoost, every time.</p>
+
+    <h2>The map: when to use what</h2>
+    <p><strong>Structured / tabular data</strong> (rows and columns, spreadsheets, business
+      data) → <strong>gradient boosting usually wins.</strong> Classic ML is not dead here; it
+      dominates.</p>
+    <p><strong>Unstructured data</strong> (images, text, audio) → <strong>deep learning.</strong></p>
+    <div class="callout">So how much classic ML does a GenAI engineer use? You live mostly in
+      deep-learning land — but you'll be tested on these, you'll use them for the countless
+      tabular problems around any AI product, and they're the foundation of everything else.
+      Not gatekeeping — scaffolding.</div>
+
+    <h2>Try it yourself</h2>
+    <pre><code>from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+X, y = load_breast_cancer(return_X_y=True)
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=42)
+
+for name, m in [
+    ("logreg", LogisticRegression(max_iter=5000)),
+    ("tree",   DecisionTreeClassifier(random_state=42)),
+    ("forest", RandomForestClassifier(n_estimators=200, random_state=42)),
+    ("boost",  GradientBoostingClassifier(random_state=42)),
+]:
+    m.fit(Xtr, ytr)
+    print(name, round(m.score(Xtr, ytr), 3), round(m.score(Xte, yte), 3))</code></pre>
+
+    <h2>Interview questions</h2>
+    <div class="qa">
+      <p class="q">Difference between bagging and boosting?</p>
+      <p class="a">Bagging (random forest) trains many models in parallel on random subsets and
+        averages them — reduces variance. Boosting (XGBoost) trains models sequentially, each
+        correcting the last's errors — reduces bias, usually higher accuracy but needs careful
+        tuning.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why is it called logistic <em>regression</em> if it classifies?</p>
+      <p class="a">Because it regresses a linear function on the log-odds, then maps that to a
+        probability with the sigmoid. The machinery is regression; the thresholded output makes
+        it a classifier — and it's the ancestor of neural-net softmax.</p>
+    </div>
+    <div class="qa">
+      <p class="q">When would you pick a simple model over a deep neural net?</p>
+      <p class="a">Tabular data, small datasets, when interpretability is required (finance,
+        healthcare), tight compute/latency budgets, or when the baseline already performs well.
+        The experiment above is a live example.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What's feature importance and why does it matter?</p>
+      <p class="a">A score of how much each input drove predictions. It gives interpretability —
+        you can explain and debug decisions — which neural networks largely sacrifice. Crucial
+        anywhere "why did the model decide this?" is a legal or trust requirement.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-1.html">← Module 1: ML Foundations</a>
+    <span>Module 3 coming soon →</span>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 02</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

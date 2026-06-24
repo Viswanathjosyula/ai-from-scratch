@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 — ML Foundations | AI from scratch</title>
+<meta name="description" content="What machine learning actually is, the three ways it learns, and the trap that breaks every model: overfitting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 01 · ML Foundations</p>
+    <h1>The bedrock: how machines actually learn</h1>
+    <p class="stand">What machine learning really is, the three ways it learns, and the one
+      trap that quietly breaks every model — overfitting.</p>
+  </div>
+
+  <article>
+    <h2>The core mental flip</h2>
+    <p>In <strong>traditional programming</strong>, you write the rules.
+      <code>if temperature &gt; 38: print("fever")</code> — you, the human, know the rule and
+      type it out.</p>
+    <p>In <strong>machine learning</strong>, you show examples and the machine finds the rules.
+      You hand it 10,000 patient records labelled "fever / no fever" and it works out the
+      threshold itself. You're not programming the logic — you're programming a process that
+      <em>learns</em> the logic from data.</p>
+    <div class="callout">An LLM is the extreme version of this: nobody wrote rules for grammar
+      or facts. It learned the patterns from billions of text examples.</div>
+
+    <h2>The three ways machines learn</h2>
+    <p><strong>Supervised learning</strong> — the data comes with the right answers (labels).
+      "Here are emails marked spam / not-spam, learn to predict." This is most practical ML.
+      <em>The fine-tuning stage of an LLM is supervised.</em></p>
+    <p><strong>Unsupervised learning</strong> — no labels; find the structure yourself.
+      Grouping customers into types nobody defined in advance.
+      <em>LLM pretraining is self-supervised — predict the next word, where the "label" is
+      simply the next word in the text.</em></p>
+    <p><strong>Reinforcement learning</strong> — learn by trial and reward.
+      <em>The "RL" in RLHF, where a model is rewarded for responses humans prefer.</em></p>
+
+    <h2>The one idea everything hinges on</h2>
+    <p>Every ML project follows the same path: <strong>data → split → train → evaluate →
+      predict.</strong> The load-bearing step is the <strong>train/test split</strong>. You
+      never judge a model on data it learned from — that's like grading students on the exact
+      questions they studied. You hold out a chunk of data, train on the rest, then test on the
+      held-out part to see if it truly <em>generalises</em>.</p>
+    <div class="callout">This is why "data contamination" is a scandal in LLM benchmarks — if
+      test questions leaked into training data, the scores mean nothing. Same principle,
+      billion-dollar stakes.</div>
+
+    <h2>Overfitting: the central trap</h2>
+    <p>I trained decision trees of increasing complexity to predict whether a tumour is benign
+      or malignant. Watch what happens:</p>
+    <pre class="result">tree depth | train acc | test acc | note
+         1 |   92.5%   |  89.5%   | underfit
+         2 |   94.2%   |  93.0%   | underfit
+         3 |   97.0%   |  96.5%   | good balance   &larr; sweet spot
+         5 |   99.5%   |  95.3%   | OVERFIT
+        10 |  100.0%   |  94.2%   | OVERFIT
+      none |  100.0%   |  94.2%   | OVERFIT</pre>
+    <p>That table is the whole lesson:</p>
+    <p><strong>Underfitting</strong> (depth 1–2): the model is too simple — mediocre on both
+      train and test. It hasn't learned enough.</p>
+    <p><strong>The sweet spot</strong> (depth 3): test accuracy peaks. It learned the real
+      pattern.</p>
+    <p><strong>Overfitting</strong> (depth 5+): training accuracy hits a perfect 100% but test
+      accuracy <em>drops</em>. The model memorised the training data — including its noise —
+      instead of learning the general pattern. It aced the questions it studied and flunked the
+      real exam.</p>
+    <p>That train-vs-test gap is what experienced practitioners watch obsessively. In one
+      sentence: <strong>too simple is high bias, too complex is high variance, and the job is
+      balancing the two.</strong></p>
+
+    <h2>Try it yourself</h2>
+    <pre><code>from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+X, y = load_breast_cancer(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42)
+
+for depth in [1, 3, 5, 10, None]:
+    m = DecisionTreeClassifier(max_depth=depth, random_state=42).fit(X_train, y_train)
+    print(depth, m.score(X_train, y_train), m.score(X_test, y_test))</code></pre>
+    <p>Run it (<code>pip install scikit-learn</code>), then change <code>test_size</code> to
+      <code>0.5</code> and watch where overfitting kicks in. That tinkering <em>is</em> the
+      learning.</p>
+
+    <h2>Interview questions</h2>
+    <div class="qa">
+      <p class="q">Difference between supervised and unsupervised learning?</p>
+      <p class="a">Supervised uses labelled data to learn input→output mappings; unsupervised
+        finds structure in unlabelled data. Strong answer: LLM pretraining is self-supervised —
+        the data labels itself using the next token as the target.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Your model gets 99% on training but 80% on test. What's happening?</p>
+      <p class="a">Overfitting — it memorised noise. Fixes: simplify the model, add
+        regularisation, get more data, or use cross-validation. Naming several fixes is what
+        separates a strong answer.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why do we need a test set at all?</p>
+      <p class="a">To estimate performance on data the model has never seen — the only thing
+        that matters in production. Scoring on training data is dishonestly optimistic.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What's the bias-variance tradeoff?</p>
+      <p class="a">High bias = too simple, underfits. High variance = too complex, overfits.
+        Total error ≈ bias² + variance + irreducible noise; you tune complexity to minimise
+        the sum.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <span>← You're at the start</span>
+    <a href="module-2.html">Next: Classic Algorithms →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 01</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

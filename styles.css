@@ -1,0 +1,218 @@
+/* ============================================================
+   AI from scratch — design system
+   Signature: the curriculum "route" — a vertical line where each
+   module is a stop, filled when published, hollow when upcoming.
+   Type: Space Grotesk (display) + Newsreader (reading) + JetBrains Mono (code/labels)
+   ============================================================ */
+
+:root {
+  --bg:      #F3F4F0;   /* cool warm paper */
+  --surface: #FCFDFB;   /* reading panels */
+  --ink:     #16202A;   /* deep slate */
+  --muted:   #5C6873;   /* captions, secondary */
+  --accent:  #2C53F0;   /* signal blue — links, "live" */
+  --warm:    #F2693C;   /* progress / done markers */
+  --line:    #DBDED5;   /* hairlines */
+  --code-bg: #161F2A;   /* dark code blocks */
+  --code-fg: #E7EBF0;
+
+  --maxw: 720px;
+  --display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --body: "Newsreader", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation: none !important; transition: none !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 19px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 22px 0; border-bottom: 1px solid var(--line);
+}
+.brand {
+  font-family: var(--mono);
+  font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none; font-weight: 500;
+}
+.brand b { color: var(--accent); }
+.topbar nav a {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); text-decoration: none;
+  margin-left: 18px;
+}
+.topbar nav a:hover { color: var(--accent); }
+
+/* ---------- hero ---------- */
+.hero { padding: 64px 0 40px; }
+.eyebrow {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--warm); margin: 0 0 18px;
+}
+.hero h1 {
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(34px, 6vw, 54px); line-height: 1.04;
+  letter-spacing: -0.02em; margin: 0 0 22px;
+}
+.hero h1 em { font-style: normal; color: var(--accent); }
+.lede { font-size: 21px; color: var(--ink); margin: 0 0 30px; max-width: 60ch; }
+.lede .by { color: var(--muted); }
+
+.hero-meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.cta {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--ink); color: var(--surface); text-decoration: none;
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 13px 20px; border-radius: 2px;
+  transition: background .15s ease;
+}
+.cta:hover { background: var(--accent); }
+.cta .arr { transition: transform .15s ease; }
+.cta:hover .arr { transform: translateX(3px); }
+.progress-pill {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.progress-pill b { color: var(--warm); }
+
+/* ---------- section heading ---------- */
+.sec-label {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 48px 0 8px; border-top: 1px solid var(--line); margin-top: 40px;
+}
+
+/* ---------- the route (signature) ---------- */
+.route { list-style: none; margin: 12px 0 20px; padding: 0; position: relative; }
+.route::before {
+  content: ""; position: absolute; left: 13px; top: 14px; bottom: 14px;
+  width: 2px; background: var(--line);
+}
+.stop {
+  position: relative; padding: 16px 0 16px 52px; display: block;
+  text-decoration: none; color: inherit; border-bottom: 1px dashed transparent;
+}
+.stop + .stop { border-top: 1px solid var(--line); }
+.node {
+  position: absolute; left: 4px; top: 20px; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--bg); border: 2px solid var(--line);
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 10px; color: var(--muted); z-index: 1;
+}
+.stop.live .node { background: var(--warm); border-color: var(--warm); color: #fff; }
+.stop .mnum {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+  color: var(--muted); display: block; margin-bottom: 2px;
+}
+.stop .mtitle {
+  font-family: var(--display); font-weight: 500; font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.stop .mdesc { color: var(--muted); font-size: 16px; margin-top: 2px; }
+.stop.live { cursor: pointer; }
+.stop.live:hover .mtitle { color: var(--accent); }
+.stop.soon { opacity: 0.72; }
+.tag {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 2px 7px; border-radius: 2px;
+  vertical-align: middle; margin-left: 10px;
+}
+.tag.live { background: rgba(44,83,240,.12); color: var(--accent); }
+.tag.soon { background: rgba(92,104,115,.12); color: var(--muted); }
+
+/* ---------- module page ---------- */
+.mhead { padding: 56px 0 8px; }
+.mhead .kicker {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--warm); margin-bottom: 14px;
+}
+.mhead h1 {
+  font-family: var(--display); font-weight: 700;
+  font-size: clamp(30px, 5vw, 44px); letter-spacing: -0.02em;
+  line-height: 1.06; margin: 0 0 16px;
+}
+.mhead .stand { font-size: 20px; color: var(--muted); max-width: 60ch; }
+
+article h2 {
+  font-family: var(--display); font-weight: 700; font-size: 26px;
+  letter-spacing: -0.01em; margin: 46px 0 12px; padding-top: 8px;
+}
+article h3 {
+  font-family: var(--display); font-weight: 500; font-size: 20px;
+  margin: 28px 0 6px;
+}
+article p { margin: 0 0 18px; }
+article strong { font-weight: 600; }
+article em { color: var(--muted); font-style: italic; }
+.callout {
+  border-left: 3px solid var(--warm); background: var(--surface);
+  padding: 14px 18px; margin: 22px 0; border-radius: 0 3px 3px 0;
+  font-size: 17.5px;
+}
+.callout b { color: var(--warm); }
+
+/* code */
+pre {
+  background: var(--code-bg); color: var(--code-fg); border-radius: 5px;
+  padding: 18px 20px; overflow-x: auto; margin: 22px 0;
+  font-family: var(--mono); font-size: 13.5px; line-height: 1.6;
+}
+code { font-family: var(--mono); font-size: 0.86em; }
+p code, li code { background: rgba(44,83,240,.10); color: var(--accent); padding: 1px 5px; border-radius: 3px; }
+pre code { background: none; color: inherit; padding: 0; }
+
+/* the output table look */
+.result { font-family: var(--mono); font-size: 13px; }
+
+/* Q&A */
+.qa { border-top: 1px solid var(--line); padding: 18px 0; }
+.qa .q { font-family: var(--display); font-weight: 500; font-size: 18px; margin: 0 0 8px; }
+.qa .q::before { content: "Q "; color: var(--warm); font-family: var(--mono); font-size: 13px; }
+.qa .a { margin: 0; color: var(--ink); }
+
+/* module nav */
+.mnav { display: flex; justify-content: space-between; gap: 14px;
+  border-top: 1px solid var(--line); margin-top: 50px; padding: 26px 0 10px; }
+.mnav a {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em;
+  color: var(--accent); text-decoration: none;
+}
+.mnav a:hover { text-decoration: underline; }
+.mnav span { color: var(--muted); font-family: var(--mono); font-size: 12.5px; }
+
+/* ---------- footer ---------- */
+footer {
+  border-top: 1px solid var(--line); margin-top: 60px; padding: 30px 0 60px;
+  color: var(--muted); font-size: 16px;
+}
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.foot-mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; }
+
+/* focus visibility */
+a:focus-visible, .cta:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+}
+
+@media (max-width: 540px) {
+  body { font-size: 18px; }
+  .topbar nav a:first-child { margin-left: 0; }
+  .hero { padding: 44px 0 30px; }
+}
