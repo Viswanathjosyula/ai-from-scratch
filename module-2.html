@@ -23,9 +23,10 @@
 
   <div class="mhead">
     <p class="kicker">Module 02 · Classic Algorithms</p>
-    <h1>The workhorses — and why simple often wins</h1>
+    <h1>The workhorses — and how close simple gets</h1>
     <p class="stand">Regression, decision trees, random forests and boosting: the models that
-      still dominate real interviews, and a live experiment where the oldest one beat them all.</p>
+      still dominate real interviews, and a live experiment showing the dead-simple baseline
+      land within a whisker of the fanciest model.</p>
   </div>
 
   <article>
@@ -57,22 +58,35 @@
       most tabular-data competitions.</p>
 
     <h2>The result that teaches the most</h2>
-    <p>I ran all four on the same tumour dataset. Test accuracy on unseen data:</p>
-    <pre class="result">model                 train    test
-Logistic Regression   96.0%   97.7%   &larr; the simplest model WON
-Decision Tree        100.0%   94.2%   &larr; overfit
-Random Forest        100.0%   97.1%
-Gradient Boosting    100.0%   95.9%</pre>
-    <p>Plain logistic regression beat all the fancy ensembles. This is one of the most
-      important practical lessons in ML, and interviewers love to see you understand it:
-      <strong>always try the simple baseline first.</strong> Complex models cost compute,
-      interpretability and tuning effort — and often don't even win. A senior engineer reaches
-      for logistic regression before XGBoost, every time.</p>
+    <p>I ran all four on the same real NYC taxi data from Module 1 — predicting the fare from a
+      ride's distance and passenger count. Here's the R² each scored on rides it had never seen
+      (1.0 = perfect, 0.0 = no better than guessing the average fare):</p>
+    <pre class="result">model               train R²   test R²
+Linear Regression    0.846     0.848
+Decision Tree        0.932     0.769   &larr; overfit — worst on new data
+Random Forest        0.922     0.849
+Gradient Boosting    0.903     0.883   &larr; winner</pre>
+
+    <a class="run-btn" href="https://colab.research.google.com/github/viswanathjosyula/ai-from-scratch/blob/main/algorithms.ipynb" target="_blank" rel="noopener">
+      <span class="play">▶</span> Run this yourself in Colab
+    </a>
+    <p class="run-note">Real data, fixed seed — you'll get the same four numbers.</p>
+
+    <p>Here's the lesson, and it's more useful than "fancy always wins" or "simple always wins."
+      Gradient boosting <em>did</em> win — but look how close it was: plain <strong>linear
+      regression, the simplest model by far, landed at 0.848 versus the winner's 0.883.</strong>
+      A ~3.5-point gap. The simple baseline tied the random forest and came within a whisker of
+      the best model on the board, for a tiny fraction of the complexity.</p>
+    <p>Meanwhile the lone decision tree <em>overfit</em> — near-top training score, worst test
+      score — exactly the Module 1 trap. So the rule a senior engineer actually follows:
+      <strong>always run the simple baseline first.</strong> It's usually right there, it's
+      cheaper, faster and explainable, and it tells you whether a fancy model's extra few points
+      are even worth paying for. Sometimes they are; often they aren't.</p>
 
     <h2>The map: when to use what</h2>
     <p><strong>Structured / tabular data</strong> (rows and columns, spreadsheets, business
       data) → <strong>gradient boosting usually wins.</strong> Classic ML is not dead here; it
-      dominates.</p>
+      dominates. (Our taxi run is a live example — boosting on top.)</p>
     <p><strong>Unstructured data</strong> (images, text, audio) → <strong>deep learning.</strong></p>
     <div class="callout">So how much classic ML does a GenAI engineer use? You live mostly in
       deep-learning land — but you'll be tested on these, you'll use them for the countless
@@ -80,20 +94,21 @@ Gradient Boosting    100.0%   95.9%</pre>
       Not gatekeeping — scaffolding.</div>
 
     <h2>Try it yourself</h2>
-    <pre><code>from sklearn.datasets import load_breast_cancer
+    <pre><code>import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.tree import DecisionTreeRegressor
 
-X, y = load_breast_cancer(return_X_y=True)
+df = sns.load_dataset("taxis").dropna(subset=["distance", "passengers", "fare"])
+X, y = df[["distance", "passengers"]], df["fare"]
 Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=0.3, random_state=42)
 
 for name, m in [
-    ("logreg", LogisticRegression(max_iter=5000)),
-    ("tree",   DecisionTreeClassifier(random_state=42)),
-    ("forest", RandomForestClassifier(n_estimators=200, random_state=42)),
-    ("boost",  GradientBoostingClassifier(random_state=42)),
+    ("linear", LinearRegression()),
+    ("tree",   DecisionTreeRegressor(random_state=42)),
+    ("forest", RandomForestRegressor(n_estimators=200, random_state=42)),
+    ("boost",  GradientBoostingRegressor(random_state=42)),
 ]:
     m.fit(Xtr, ytr)
     print(name, round(m.score(Xtr, ytr), 3), round(m.score(Xte, yte), 3))</code></pre>
