@@ -28,7 +28,7 @@ Squarespace if the domain lives there). Add ONE record:
 
 | Type  | Host / Name | Value / Target            |
 |-------|-------------|---------------------------|
-| CNAME | `ai`        | `YOURUSERNAME.github.io`  |
+| CNAME | `ai`        | `Viswanathjosyula.github.io`  |
 
 Replace `YOURUSERNAME` with your GitHub username. Save. DNS can take anywhere from a few
 minutes to a few hours to take effect. When it's live, https://ai.josyulablog.org loads
