@@ -168,6 +168,22 @@ article em { color: var(--muted); font-style: italic; }
 }
 .callout b { color: var(--warm); }
 
+/* Colab / run CTA */
+.run-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 8px 0 6px; padding: 12px 18px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em;
+  text-transform: uppercase; border-radius: 2px;
+  transition: filter .15s ease;
+}
+.run-btn:hover { filter: brightness(1.08); }
+.run-btn .play { font-size: 12px; }
+.run-note {
+  font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.02em;
+  color: var(--muted); margin: 0 0 18px;
+}
+
 /* code */
 pre {
   background: var(--code-bg); color: var(--code-fg); border-radius: 5px;
@@ -206,6 +222,97 @@ footer a { color: var(--accent); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 .foot-mono { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; }
 
+/* ---------- roadmap / interview pages ---------- */
+.toc {
+  list-style: none; margin: 8px 0 28px; padding: 0;
+  border: 1px solid var(--line); background: var(--surface);
+  padding: 14px 18px;
+}
+.toc li {
+  font-family: var(--mono); font-size: 13px; letter-spacing: 0.02em;
+  padding: 6px 0; border-top: 1px solid var(--line);
+}
+.toc li:first-child { border-top: none; }
+.toc a { color: var(--accent); text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+.plan-list {
+  margin: 0 0 18px; padding-left: 1.15em;
+}
+.plan-list li { margin: 0 0 8px; }
+
+.phase-meta {
+  display: inline-block; margin-left: 8px;
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.04em; color: var(--muted); vertical-align: middle;
+}
+
+.source-link {
+  float: right; font-family: var(--mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.04em; color: var(--accent); text-decoration: none;
+  margin-top: 8px;
+}
+.source-link:hover { text-decoration: underline; }
+
+.topic-note {
+  color: var(--muted); font-size: 17px; margin: -4px 0 18px;
+}
+
+.cta-row {
+  display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 10px;
+}
+.cta.secondary {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--ink);
+}
+.cta.secondary:hover { background: var(--ink); color: var(--surface); }
+
+.link-block {
+  display: block; text-decoration: none; color: inherit;
+  padding: 18px 0; border-top: 1px solid var(--line);
+}
+.link-block:first-of-type { border-top: none; }
+.link-block .mnum {
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em;
+  color: var(--muted); display: block; margin-bottom: 2px;
+}
+.link-block .mtitle {
+  font-family: var(--display); font-weight: 500; font-size: 22px;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.link-block:hover .mtitle { color: var(--accent); }
+.link-block .mdesc { color: var(--muted); font-size: 16px; margin-top: 2px; }
+
+/* concept checklist (roadmap) */
+.concept-list {
+  margin: 12px 0 22px;
+  border-top: 1px solid var(--line);
+}
+.concept {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 14px; flex-wrap: wrap;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.concept-name {
+  flex: 1 1 220px;
+  font-size: 17px;
+  line-height: 1.4;
+}
+.concept-links {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.concept-links a {
+  color: var(--accent); text-decoration: none;
+}
+.concept-links a:hover { text-decoration: underline; }
+.soon-label {
+  color: var(--muted);
+}
+
 /* focus visibility */
 a:focus-visible, .cta:focus-visible {
   outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
@@ -213,6 +320,8 @@ a:focus-visible, .cta:focus-visible {
 
 @media (max-width: 540px) {
   body { font-size: 18px; }
+  .topbar nav a { margin-left: 12px; font-size: 11px; }
   .topbar nav a:first-child { margin-left: 0; }
   .hero { padding: 44px 0 30px; }
+  .source-link { float: none; display: block; margin: 0 0 8px; }
 }

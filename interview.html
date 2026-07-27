@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interview questions | AI from scratch</title>
+<meta name="description" content="ML, deep learning, LLM, and system-design interview questions with plain-English answers — organized for a 6–8 month prep plan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Interview bank · growing with each module</p>
+    <h1>Questions you’ll actually get asked</h1>
+    <p class="stand">Plain-English answers with the tradeoffs interviewers listen for.
+      Drill five a week out loud. Deeper write-ups live in the modules.</p>
+  </div>
+
+  <article>
+    <div class="callout">How to use this page: cover the answer with your hand, speak for 60–90 seconds,
+      then check. Strong answers name <b>tradeoffs and follow-up fixes</b>, not just definitions.
+      Pair with the <a href="roadmap.html">6–8 month roadmap</a>.</div>
+
+    <h2 class="sec-label" style="margin-top:8px;padding-top:32px;border-top:1px solid var(--line)">Topics</h2>
+    <ul class="toc">
+      <li><a href="#foundations">ML foundations</a> · Module 1</li>
+      <li><a href="#algorithms">Classic algorithms</a> · Module 2</li>
+      <li><a href="#deep-learning">Deep learning</a> · Module 3</li>
+      <li><a href="#llms">Transformers, LLMs &amp; GenAI</a> · Modules 4–5</li>
+      <li><a href="#data">Data &amp; features</a> · Module 6</li>
+      <li><a href="#mlops">MLOps &amp; deployment</a> · Module 7</li>
+      <li><a href="#system-design">System design prompts</a> · Module 8</li>
+    </ul>
+
+    <!-- ========== FOUNDATIONS ========== -->
+    <h2 id="foundations">ML foundations <a class="source-link" href="module-1.html">Module 1 →</a></h2>
+
+    <div class="qa">
+      <p class="q">Difference between supervised and unsupervised learning?</p>
+      <p class="a">Supervised uses labelled data to learn input→output mappings; unsupervised
+        finds structure in unlabelled data. Strong answer: LLM pretraining is self-supervised —
+        the data labels itself using the next token as the target.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Your model gets 99% on training but 80% on test. What’s happening?</p>
+      <p class="a">Overfitting — it memorised noise. Fixes: simplify the model, add
+        regularisation, get more data, or use cross-validation. Naming several fixes is what
+        separates a strong answer.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why do we need a test set at all?</p>
+      <p class="a">To estimate performance on data the model has never seen — the only thing
+        that matters in production. Scoring on training data is dishonestly optimistic.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What’s the bias-variance tradeoff?</p>
+      <p class="a">High bias = too simple, underfits. High variance = too complex, overfits.
+        Total error ≈ bias² + variance + irreducible noise; you tune complexity to minimise
+        the sum.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Train / validation / test — what is each for?</p>
+      <p class="a">Train fits parameters. Validation chooses hyperparameters and detects overfitting
+        during development. Test is a final, untouched estimate of generalisation. Touching test
+        during tuning leaks information and inflates reported scores.</p>
+    </div>
+    <div class="qa">
+      <p class="q">When is accuracy a bad metric?</p>
+      <p class="a">Class imbalance — a model that always predicts the majority class can look
+        accurate and be useless. Prefer precision/recall/F1, ROC-AUC, or PR-AUC depending on
+        the cost of false positives vs false negatives.</p>
+    </div>
+
+    <!-- ========== ALGORITHMS ========== -->
+    <h2 id="algorithms">Classic algorithms <a class="source-link" href="module-2.html">Module 2 →</a></h2>
+
+    <div class="qa">
+      <p class="q">Difference between bagging and boosting?</p>
+      <p class="a">Bagging (random forest) trains many models in parallel on random subsets and
+        averages them — reduces variance. Boosting (XGBoost) trains models sequentially, each
+        correcting the last’s errors — reduces bias, usually higher accuracy but needs careful
+        tuning.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why is it called logistic <em>regression</em> if it classifies?</p>
+      <p class="a">Because it regresses a linear function on the log-odds, then maps that to a
+        probability with the sigmoid. The machinery is regression; the thresholded output makes
+        it a classifier — and it’s the ancestor of neural-net softmax.</p>
+    </div>
+    <div class="qa">
+      <p class="q">When would you pick a simple model over a deep neural net?</p>
+      <p class="a">Tabular data, small datasets, when interpretability is required (finance,
+        healthcare), tight compute/latency budgets, or when the baseline already performs well.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What’s feature importance and why does it matter?</p>
+      <p class="a">A score of how much each input drove predictions. It gives interpretability —
+        you can explain and debug decisions — which neural networks largely sacrifice. Crucial
+        anywhere “why did the model decide this?” is a legal or trust requirement.</p>
+    </div>
+    <div class="qa">
+      <p class="q">L1 vs L2 regularisation?</p>
+      <p class="a">L2 shrinks weights smoothly (ridge). L1 can drive weights to exact zero
+        (lasso) and does feature selection. Elastic net mixes both. In neural nets, weight decay
+        is typically L2; dropout is a different regulariser.</p>
+    </div>
+
+    <!-- ========== DEEP LEARNING ========== -->
+    <h2 id="deep-learning">Deep learning <a class="source-link" href="module-3.html">Module 3 →</a></h2>
+
+    <div class="qa">
+      <p class="q">What does an activation function do, and why do we need one?</p>
+      <p class="a">It adds a non-linearity after the weighted sum. Without it, stacked layers
+        collapse into a single linear transform and cannot model curved boundaries. ReLU is
+        the common default: simple, sparse, and trains well.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Explain backpropagation in one breath.</p>
+      <p class="a">Compute the loss, then use the chain rule to push gradients backward through
+        each layer so every weight learns how much it contributed to the error — then take a
+        small step downhill (gradient descent).</p>
+    </div>
+    <div class="qa">
+      <p class="q">When would you still prefer gradient boosting over a neural net?</p>
+      <p class="a">Structured/tabular data, smaller datasets, tight latency budgets, or when
+        you need strong out-of-the-box baselines. Deep nets shine on unstructured,
+        high-dimensional inputs where compositionality matters.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is the vanishing gradient problem?</p>
+      <p class="a">In very deep stacks, gradients can shrink toward zero as they flow backward,
+        so early layers stop learning. Mitigations: ReLU, residual connections, better init,
+        normalization — all of which show up in modern transformers.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is a learning rate, and what goes wrong if it’s off?</p>
+      <p class="a">Step size for each gradient update. Too high → loss diverges or oscillates.
+        Too low → training crawls or stalls in poor minima. Practice: try a range, use schedules
+        or adaptive optimizers (Adam), and watch train/val curves.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Batch norm vs dropout — what problem does each attack?</p>
+      <p class="a">Batch norm stabilises activations across layers (faster, more stable training).
+        Dropout randomly zeros units during training to reduce co-adaptation (regularisation).
+        They are complementary, not substitutes.</p>
+    </div>
+
+    <!-- ========== LLMS ========== -->
+    <h2 id="llms">Transformers, LLMs &amp; GenAI <span class="phase-meta">Modules 4–5 · expanding</span></h2>
+    <p class="topic-note">Full modules are still coming. These are the high-frequency interview
+      questions to start drilling now.</p>
+
+    <div class="qa">
+      <p class="q">Explain self-attention in plain English.</p>
+      <p class="a">Each token builds a query, key, and value. The query of one token scores against
+        keys of others to decide how much to “read” from each value. That lets the model mix
+        information across the whole sequence without a fixed left-to-right state like an RNN.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is a token? Why does tokenization matter?</p>
+      <p class="a">A token is a subword unit the model actually consumes (not always a word).
+        Vocab size and token boundaries affect cost (context length), multilingual behaviour,
+        and weird edge cases (numbers, code, rare names).</p>
+    </div>
+    <div class="qa">
+      <p class="q">Pretraining vs fine-tuning vs RLHF?</p>
+      <p class="a">Pretraining: next-token prediction on huge corpora (general language knowledge).
+        Supervised fine-tuning (SFT): imitate high-quality instruction/response pairs.
+        RLHF / preference tuning: reward answers humans prefer (or approximate that with DPO).
+        Each stage needs different data and fails differently.</p>
+    </div>
+    <div class="qa">
+      <p class="q">RAG vs fine-tuning — when do you pick which?</p>
+      <p class="a">RAG when knowledge changes often, must be cited, or is private docs — keep facts
+        in a retriever. Fine-tune when you need style, format, tool-use patterns, or domain
+        language baked into behaviour. Many production systems use both.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why do LLMs hallucinate?</p>
+      <p class="a">They predict plausible next tokens, not truth. Gaps in training data, bad
+        retrieval, overconfident decoding, and prompts that force an answer all increase
+        hallucinations. Mitigations: RAG with citations, abstention, constrained decoding,
+        eval sets for factuality.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What do temperature and top-p control?</p>
+      <p class="a">They reshape the next-token distribution. Higher temperature / more lenient top-p
+        → more diverse (and often less reliable) text. Low temperature → peaked, deterministic
+        answers. For factual tasks, keep them low; for brainstorming, raise carefully.</p>
+    </div>
+    <div class="qa">
+      <p class="q">How would you evaluate an LLM feature?</p>
+      <p class="a">Start with a fixed eval set of real user tasks; score exact metrics where
+        possible (retrieval hit rate, format validity), plus human or rubric-based quality.
+        Track online metrics (thumbs, escalation rate, latency, cost). Don’t rely on a single
+        “LLM-as-judge” score without spot checks.</p>
+    </div>
+
+    <!-- ========== DATA ========== -->
+    <h2 id="data">Data &amp; features <span class="phase-meta">Module 6 · expanding</span></h2>
+
+    <div class="qa">
+      <p class="q">What is data leakage? Give an example.</p>
+      <p class="a">When information from outside the training setup — especially the future or the
+        test set — sneaks into fitting. Example: scaling features using the full dataset before
+        the split, or including a feature that is a proxy for the label. Inflated metrics,
+        broken production.</p>
+    </div>
+    <div class="qa">
+      <p class="q">How do you handle class imbalance?</p>
+      <p class="a">Better metrics first (not accuracy). Then: class weights, resampling, threshold
+        tuning, or more minority data. Don’t jump to SMOTE before a weighted baseline and a
+        clear cost matrix for errors.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Random split or time-based split?</p>
+      <p class="a">If the world drifts over time (fraud, demand, news), a random split leaks the
+        future into training. Use time-based splits to mimic production. Random is fine when
+        i.i.d. is a fair assumption.</p>
+    </div>
+
+    <!-- ========== MLOPS ========== -->
+    <h2 id="mlops">MLOps &amp; deployment <span class="phase-meta">Module 7 · expanding</span></h2>
+
+    <div class="qa">
+      <p class="q">How do you know a model is rotting in production?</p>
+      <p class="a">Monitor input distributions (data drift), prediction distributions, downstream
+        business metrics, and latency/errors. Compare against a shadow baseline. For LLMs, also
+        track retrieval quality, refusal rate, and eval-set regressions on each prompt/model change.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What do you log for a production ML / LLM service?</p>
+      <p class="a">Request IDs, model/prompt versions, latency, token/cost counts, inputs/outputs
+        (with privacy redaction), retrieval IDs for RAG, and user feedback. You can’t debug or
+        improve what you didn’t version.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Blue/green or canary for model rollout — why?</p>
+      <p class="a">Never ship a new model to 100% traffic blind. Canary a small %, compare metrics
+        to the champion, then promote or roll back. Same discipline for prompt changes.</p>
+    </div>
+
+    <!-- ========== SYSTEM DESIGN ========== -->
+    <h2 id="system-design">System design prompts <span class="phase-meta">Module 8 · expanding</span></h2>
+    <p class="topic-note">Practice out loud: requirements → data → model/prompt → eval → serve → monitor.
+      Aim for a structured 20–30 minute sketch.</p>
+
+    <div class="qa">
+      <p class="q">Design a RAG customer-support bot for a SaaS product.</p>
+      <p class="a">Clarify languages, SLA, and when to escalate to humans. Ingest docs → chunk →
+        embed → vector index; retrieve top-k with metadata filters; generate with citations;
+        eval set of real tickets; guardrails for PII; monitor deflection rate, CSAT, and
+        hallucination complaints; version prompts and indexes.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Design semantic search over a company’s internal documents.</p>
+      <p class="a">Access control first. Hybrid search (keyword + dense vectors) usually beats
+        either alone. Chunking strategy, embedding model choice, re-ranker, freshness pipeline,
+        and an eval of ranked relevance (nDCG / manual labels). Latency and permission checks
+        at query time are part of the design.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Fine-tune, prompt, or RAG for a domain copilot?</p>
+      <p class="a">Default: prompt + tools + RAG for facts. Fine-tune when style/format/tool-calling
+        must be reliable and stable. Estimate data availability, change frequency of knowledge,
+        privacy, and cost. Strong answers compare options explicitly instead of picking one blindly.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Design a content-moderation pipeline.</p>
+      <p class="a">Define policy taxonomy and severity. Combine cheap classifiers / filters with
+        an LLM judge for edge cases; human review queue for appeals and calibration. Measure
+        precision/recall per category, latency, and reviewer agreement. Plan for adversary
+        shifts and multilingual content.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="roadmap.html">← 6–8 month roadmap</a>
+    <a href="module-1.html">Start drilling Module 1 →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — INTERVIEW BANK</p>
+    <p>New questions land here as each module goes live.
+      <a href="index.html">All modules</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

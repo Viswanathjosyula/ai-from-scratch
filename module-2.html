@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Module 2 — Classic Algorithms | AI from scratch</title>
-<meta name="description" content="Regression, decision trees, random forests, boosting — and why the simplest model often wins.">
+<meta name="description" content="Industry-depth classic ML in plain English: linear/logistic regression, trees, bagging, boosting, baselines, and when tabular models beat deep nets.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -17,50 +17,103 @@
     <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
     <nav>
       <a href="index.html#curriculum">Curriculum</a>
-      <a href="index.html#about">About</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="interview.html">Interviews</a>
     </nav>
   </header>
 
   <div class="mhead">
     <p class="kicker">Module 02 · Classic Algorithms</p>
     <h1>The workhorses — and how close simple gets</h1>
-    <p class="stand">Regression, decision trees, random forests and boosting: the models that
-      still dominate real interviews, and a live experiment showing the dead-simple baseline
-      land within a whisker of the fanciest model.</p>
+    <p class="stand">Regression, trees, forests and boosting: the models that still dominate
+      tabular problems and interviews — plus a live bake-off where the simplest baseline
+      nearly ties the fanciest model.</p>
   </div>
 
   <article>
-    <p>Why a future GenAI engineer needs these: structured data is everywhere, interviews test
-      them relentlessly, and every idea here — loss functions, the softmax output — gets
-      inherited by neural networks. Master these and deep learning becomes "the same ideas,
-      scaled up."</p>
+    <ul class="toc">
+      <li><a href="#why">Why GenAI engineers still need these</a></li>
+      <li><a href="#foundations">Linear &amp; logistic regression (the DNA of neural nets)</a></li>
+      <li><a href="#trees">The tree family: single tree → forest → boosting</a></li>
+      <li><a href="#neighbors">Other workhorses you’ll be asked about</a></li>
+      <li><a href="#experiment">Bake-off: four models on NYC taxi fares</a></li>
+      <li><a href="#when-to-use">When to use what (+ feature importance)</a></li>
+      <li><a href="#try-it">Try it yourself</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
 
-    <h2>The two foundations</h2>
-    <p><strong>Linear regression</strong> predicts a <em>number</em>. It fits the straight line
-      of best fit through your data: "given square footage, predict house price." What it's
-      really teaching you — fit a function to data by minimising error — is exactly what neural
-      networks scale to billions of parameters.</p>
-    <p><strong>Logistic regression</strong>, despite the name, predicts a <em>category</em>. It
-      takes the linear output and squashes it through an S-curve into a probability between 0
-      and 1.</p>
-    <div class="callout">This matters enormously: <b>the output layer of every classifier
-      neural network — and an LLM predicting the next token — is essentially massive
-      logistic/softmax regression.</b> Learn it small here, recognise it everywhere later.</div>
+    <h2 id="why">Why GenAI engineers still need these</h2>
+    <p>Structured data is everywhere (billing, clicks, risk, ops). Interviews test these
+      relentlessly. And every idea here — <strong>loss functions</strong>, gradient steps,
+      <strong>softmax</strong> outputs — gets inherited by neural networks and LLMs. Master
+      these and deep learning becomes “the same ideas, scaled up.”</p>
 
-    <h2>The tree family</h2>
-    <p><strong>Decision tree</strong> — a flowchart of yes/no questions learned from data.
-      Beautifully interpretable: you can read exactly why it decided. But alone it memorises.</p>
-    <p><strong>Random forest</strong> — train hundreds of slightly different trees and let them
-      <em>vote</em>. This is <strong>bagging</strong>: individual trees overfit in different
-      directions, so averaging cancels the noise. The crowd is wiser than any single tree.</p>
-    <p><strong>Gradient boosting</strong> — build trees <em>sequentially</em>, each one fixing
-      the errors the previous made. This is what XGBoost and LightGBM are, and tuned, they win
-      most tabular-data competitions.</p>
+    <h2 id="foundations">Linear &amp; logistic regression (the DNA of neural nets)</h2>
+    <h3>Linear regression — predict a number</h3>
+    <p>Fit the straight line (or hyperplane) of best fit:
+      <strong>ŷ = w₁x₁ + w₂x₂ + … + b</strong>. “Given square footage, predict price.”</p>
+    <p>Training usually minimises <strong>mean squared error (MSE)</strong> — the average of
+      (prediction − truth)². You can solve it in closed form for small problems, or use
+      <strong>gradient descent</strong>: nudge weights a little downhill on the loss surface
+      until MSE stops improving. That nudge-the-weights loop is exactly what deep nets do —
+      just with millions more weights and a fancier architecture.</p>
+    <h3>Logistic regression — predict a category</h3>
+    <p>Despite the name, it’s a <em>classifier</em>. Take the same linear score, then squash it
+      through a <strong>sigmoid</strong> into a probability between 0 and 1:</p>
+    <pre class="result">score  z = w·x + b
+prob   p = 1 / (1 + e^(−z))
+label  ŷ = 1 if p ≥ 0.5 (threshold is tunable)</pre>
+    <p>Training minimises <strong>log loss / cross-entropy</strong> — heavily punish confident
+      wrong probabilities. The threshold 0.5 is not sacred: for rare fraud you may flag at 0.1
+      to catch more cases (higher recall, lower precision).</p>
+    <div class="callout">Industry punchline: <b>the last layer of every neural classifier —
+      and an LLM choosing the next token — is massive logistic / softmax regression.</b>
+      Softmax is sigmoid’s multi-class cousin: turn a vector of scores into probabilities that
+      sum to 1.</div>
+    <h3>Regularisation (L1 / L2)</h3>
+    <p>Add a penalty on large weights so the model can’t rely on wild coefficients.
+      <strong>L2 (ridge)</strong> shrinks weights smoothly. <strong>L1 (lasso)</strong> can
+      drive some weights to zero (built-in feature selection). Elastic net mixes both.
+      In neural nets, “weight decay” is usually L2.</p>
 
-    <h2>The result that teaches the most</h2>
-    <p>I ran all four on the same real NYC taxi data from Module 1 — predicting the fare from a
-      ride's distance and passenger count. Here's the R² each scored on rides it had never seen
-      (1.0 = perfect, 0.0 = no better than guessing the average fare):</p>
+    <h2 id="trees">The tree family: single tree → forest → boosting</h2>
+    <h3>Decision tree</h3>
+    <p>A flowchart of yes/no questions learned from data: “distance &gt; 3 miles? passengers
+      &gt; 2?” At each split, the algorithm picks the question that most purifies the labels —
+      measured with <strong>Gini impurity</strong> or <strong>entropy</strong> (classification)
+      or variance reduction (regression).</p>
+    <p>Superpower: <strong>interpretability</strong> — you can read why it decided.
+      Weakness: alone, a deep tree memorises. That’s why Module 1’s deep trees overfit.</p>
+    <h3>Random forest — bagging</h3>
+    <p>Train hundreds of slightly different trees (random rows + random feature subsets) and
+      let them <strong>vote</strong> or average. This is <strong>bagging</strong>
+      (bootstrap aggregating): individuals overfit in different directions; averaging cancels
+      noise. Forests reduce <em>variance</em>. Harder to overfit than one tree; still strong
+      on tabular data.</p>
+    <h3>Gradient boosting — fix mistakes in sequence</h3>
+    <p>Build trees <em>sequentially</em>: each new tree fits the <strong>residual errors</strong>
+      of the current ensemble. This is <strong>boosting</strong> — usually higher accuracy,
+      more sensitive to hyperparameters (learning rate, depth, number of trees).
+      <strong>XGBoost</strong>, <strong>LightGBM</strong>, and <strong>CatBoost</strong> are
+      the industry defaults for tabular competitions and many production rankers.</p>
+    <div class="callout"><b>Bagging</b> = many models in parallel, average → lower variance.
+      <b>Boosting</b> = models in sequence, each corrects the last → lower bias, needs care.
+      Memorise that contrast; it is asked constantly.</div>
+
+    <h2 id="neighbors">Other workhorses you’ll be asked about</h2>
+    <p>You don’t need to master all of these today — but you should recognise them in one line:</p>
+    <ul class="plan-list">
+      <li><strong>k-Nearest Neighbors (k-NN)</strong> — predict from the k closest training
+        points. Simple, no training step, slow at prediction, sensitive to scaling.</li>
+      <li><strong>Naive Bayes</strong> — fast probabilistic classifier assuming features are
+        independent. Classic for text baselines; shockingly strong for the simplicity.</li>
+      <li><strong>SVM</strong> — find the maximum-margin boundary (kernels for non-linear).
+        Less dominant now than boosting/nets, still appears in interviews and older systems.</li>
+    </ul>
+
+    <h2 id="experiment">Bake-off: four models on NYC taxi fares</h2>
+    <p>Same real data as Module 1 — predict fare from distance + passenger count.
+      R² on rides each model never saw:</p>
     <pre class="result">model               train R²   test R²
 Linear Regression    0.846     0.848
 Decision Tree        0.932     0.769   &larr; overfit — worst on new data
@@ -70,30 +123,34 @@ Gradient Boosting    0.903     0.883   &larr; winner</pre>
     <a class="run-btn" href="https://colab.research.google.com/github/viswanathjosyula/ai-from-scratch/blob/main/algorithms.ipynb" target="_blank" rel="noopener">
       <span class="play">▶</span> Run this yourself in Colab
     </a>
-    <p class="run-note">Real data, fixed seed — you'll get the same four numbers.</p>
+    <p class="run-note">Real data, fixed seed — you’ll get the same four numbers.</p>
 
-    <p>Here's the lesson, and it's more useful than "fancy always wins" or "simple always wins."
-      Gradient boosting <em>did</em> win — but look how close it was: plain <strong>linear
-      regression, the simplest model by far, landed at 0.848 versus the winner's 0.883.</strong>
-      A ~3.5-point gap. The simple baseline tied the random forest and came within a whisker of
-      the best model on the board, for a tiny fraction of the complexity.</p>
-    <p>Meanwhile the lone decision tree <em>overfit</em> — near-top training score, worst test
-      score — exactly the Module 1 trap. So the rule a senior engineer actually follows:
-      <strong>always run the simple baseline first.</strong> It's usually right there, it's
-      cheaper, faster and explainable, and it tells you whether a fancy model's extra few points
-      are even worth paying for. Sometimes they are; often they aren't.</p>
+    <p>Gradient boosting <em>did</em> win — but look how close:
+      <strong>linear regression landed at 0.848 vs 0.883</strong> (~3.5 points). The simple
+      baseline tied the random forest and nearly matched the best model, for a fraction of the
+      complexity. The lone tree overfit — classic Module 1 failure mode.</p>
+    <div class="callout">Senior rule: <b>always run the simple baseline first.</b> It’s cheap,
+      explainable, and tells you whether fancy’s extra points are worth the cost. Sometimes
+      they are; often they aren’t.</div>
 
-    <h2>The map: when to use what</h2>
-    <p><strong>Structured / tabular data</strong> (rows and columns, spreadsheets, business
-      data) → <strong>gradient boosting usually wins.</strong> Classic ML is not dead here; it
-      dominates. (Our taxi run is a live example — boosting on top.)</p>
-    <p><strong>Unstructured data</strong> (images, text, audio) → <strong>deep learning.</strong></p>
-    <div class="callout">So how much classic ML does a GenAI engineer use? You live mostly in
-      deep-learning land — but you'll be tested on these, you'll use them for the countless
-      tabular problems around any AI product, and they're the foundation of everything else.
-      Not gatekeeping — scaffolding.</div>
+    <h2 id="when-to-use">When to use what (+ feature importance)</h2>
+    <p><strong>Structured / tabular data</strong> (rows &amp; columns, business metrics) →
+      <strong>gradient boosting usually wins</strong>. Classic ML is not dead here; it
+      dominates. (Our taxi run is a live example.)</p>
+    <p><strong>Unstructured data</strong> (images, text, audio) → <strong>deep learning</strong>
+      (Module 3+).</p>
+    <p><strong>Need explanations / regulated domains</strong> → linear models or shallow trees
+      first; keep a glass-box baseline even if a black box scores slightly higher.</p>
+    <h3>Feature importance</h3>
+    <p>Tree ensembles can rank how much each input drove predictions (e.g. “distance mattered
+      far more than passenger count for fare”). That’s gold for debugging and stakeholder trust.
+      Neural nets mostly sacrifice this unless you add tools like SHAP. Interviews ask:
+      <em>how would you explain this model’s decision?</em></p>
+    <div class="callout">How much classic ML does a GenAI engineer use? You live mostly in
+      deep-learning land — but you’ll be tested on these, you’ll use them for the tabular
+      problems around every AI product, and they’re the scaffolding for everything else.</div>
 
-    <h2>Try it yourself</h2>
+    <h2 id="try-it">Try it yourself</h2>
     <pre><code>import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -113,31 +170,42 @@ for name, m in [
     m.fit(Xtr, ytr)
     print(name, round(m.score(Xtr, ytr), 3), round(m.score(Xte, yte), 3))</code></pre>
 
-    <h2>Interview questions</h2>
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the full <a href="interview.html#algorithms">interview bank</a>.</p>
     <div class="qa">
       <p class="q">Difference between bagging and boosting?</p>
       <p class="a">Bagging (random forest) trains many models in parallel on random subsets and
         averages them — reduces variance. Boosting (XGBoost) trains models sequentially, each
-        correcting the last's errors — reduces bias, usually higher accuracy but needs careful
+        correcting the last’s errors — reduces bias, usually higher accuracy but needs careful
         tuning.</p>
     </div>
     <div class="qa">
       <p class="q">Why is it called logistic <em>regression</em> if it classifies?</p>
       <p class="a">Because it regresses a linear function on the log-odds, then maps that to a
         probability with the sigmoid. The machinery is regression; the thresholded output makes
-        it a classifier — and it's the ancestor of neural-net softmax.</p>
+        it a classifier — and it’s the ancestor of neural-net softmax.</p>
     </div>
     <div class="qa">
       <p class="q">When would you pick a simple model over a deep neural net?</p>
-      <p class="a">Tabular data, small datasets, when interpretability is required (finance,
-        healthcare), tight compute/latency budgets, or when the baseline already performs well.
-        The experiment above is a live example.</p>
+      <p class="a">Tabular data, small datasets, interpretability requirements, tight
+        compute/latency budgets, or when the baseline already performs well. The taxi bake-off
+        is a live example.</p>
     </div>
     <div class="qa">
-      <p class="q">What's feature importance and why does it matter?</p>
+      <p class="q">What’s feature importance and why does it matter?</p>
       <p class="a">A score of how much each input drove predictions. It gives interpretability —
-        you can explain and debug decisions — which neural networks largely sacrifice. Crucial
-        anywhere "why did the model decide this?" is a legal or trust requirement.</p>
+        explain and debug decisions — which neural networks largely sacrifice. Crucial where
+        “why?” is a legal or trust requirement.</p>
+    </div>
+    <div class="qa">
+      <p class="q">L1 vs L2 regularisation?</p>
+      <p class="a">L2 shrinks weights smoothly. L1 can zero weights (feature selection). Elastic
+        net mixes both. Neural-net weight decay is typically L2.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What loss does logistic regression minimise?</p>
+      <p class="a">Log loss / binary cross-entropy — pushes predicted probabilities toward the
+        true labels and heavily penalises confident mistakes.</p>
     </div>
   </article>
 
@@ -149,7 +217,8 @@ for name, m in [
   <footer>
     <p class="foot-mono">AI FROM SCRATCH — MODULE 02</p>
     <p>Spotted a mistake? Tell me — corrections are the point.
-      <a href="index.html">Back to all modules</a></p>
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase0">Roadmap Phase 0</a></p>
   </footer>
 
 </div>
