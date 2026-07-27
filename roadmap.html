@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6–8 month roadmap | AI from scratch</title>
+<meta name="description" content="A detailed 6–8 month plan to learn AI from scratch and become interview-ready — mapped to the eight curriculum modules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Plan · 6 to 8 months</p>
+    <h1>From zero to interview-ready</h1>
+    <p class="stand">A detailed path through the eight modules — learn deeply, build projects,
+      write everything down, and drill the questions that actually show up in ML / GenAI interviews.</p>
+  </div>
+
+  <article>
+    <p>This roadmap assumes ~12–15 hours a week (stretch to ~20 if you can). The rule that
+      makes it stick: <strong>every major concept becomes a short write-up on this site plus
+      one runnable notebook.</strong> If you skip writing, you will not retain it at interview depth.</p>
+
+    <div class="callout">By month 6–8 you should be able to: explain any core idea in plain English,
+      implement small experiments (sklearn + PyTorch), answer ML / DL / LLM questions with tradeoffs,
+      walk through 1–2 portfolio projects, and handle a light GenAI system-design round.</div>
+
+    <h2 class="sec-label" style="margin-top:8px;padding-top:32px;border-top:1px solid var(--line)">On this page</h2>
+    <ul class="toc">
+      <li><a href="#weekly">Weekly template</a></li>
+      <li><a href="#phase0">Phase 0 — Foundations (weeks 1–3)</a></li>
+      <li><a href="#phase1">Phase 1 — Deep Learning (weeks 4–8)</a></li>
+      <li><a href="#phase2">Phase 2 — Transformers &amp; LLMs (weeks 9–16)</a></li>
+      <li><a href="#phase3">Phase 3 — Data &amp; MLOps (weeks 17–22)</a></li>
+      <li><a href="#phase4">Phase 4 — Systems &amp; interviews (weeks 23–32)</a></li>
+      <li><a href="#projects">Portfolio projects</a></li>
+      <li><a href="#math">Math you actually need</a></li>
+      <li><a href="#paths">6-month vs 8-month</a></li>
+    </ul>
+
+    <h2 id="weekly">Weekly template</h2>
+    <p>Repeat every week:</p>
+    <pre class="result">Learn     40%   one concept deeply
+Build     30%   notebook or project slice
+Write     15%   publish on this site
+Drill     15%   interview Q&amp;A out loud, timed</pre>
+    <p>Drill bank: <a href="interview.html">Interview questions</a> — answer five per week in writing.</p>
+
+    <h2 id="phase0">Phase 0 — Foundations <span class="phase-meta">Weeks 1–3 · Modules 1–2</span></h2>
+    <p>You may already have most of this live. Treat it as a refresh until you can teach it.</p>
+    <ul class="plan-list">
+      <li>Supervised / unsupervised / RL — with LLM analogies (pretrain, fine-tune, RLHF)</li>
+      <li>Train / val / test, leakage, metrics (accuracy, F1, ROC-AUC, R², RMSE)</li>
+      <li>Bias–variance and overfitting — reproduce the taxi experiment</li>
+      <li>Linear &amp; logistic regression — loss + gradient step intuition</li>
+      <li>Trees, bagging, boosting — when each wins on tabular data</li>
+    </ul>
+    <p><strong>Checkpoint:</strong> explain overfitting and bagging vs boosting on a whiteboard in under five minutes.</p>
+    <p><a href="module-1.html">Module 1</a> · <a href="module-2.html">Module 2</a> ·
+      <a href="interview.html#foundations">Foundation interview Qs</a></p>
+
+    <h2 id="phase1">Phase 1 — Deep Learning core <span class="phase-meta">Weeks 4–8 · Module 3</span></h2>
+    <ul class="plan-list">
+      <li><strong>Week 4</strong> — Neurons, layers, activations, loss. Publish / revisit Module 3. Derive one forward pass by hand.</li>
+      <li><strong>Week 5</strong> — Backprop + gradient descent. Tiny NumPy net; compare to sklearn MLP.</li>
+      <li><strong>Week 6</strong> — CNNs. Fashion-MNIST or CIFAR-10 in PyTorch; explain conv / pool.</li>
+      <li><strong>Week 7</strong> — Dropout, batch norm, learning rates, early stopping — ablate one.</li>
+      <li><strong>Week 8</strong> — RNN intuition (light); why attention replaced them.</li>
+    </ul>
+    <p><strong>Project A:</strong> image or tabular classifier with clean splits, metrics, and a short failure write-up.</p>
+    <p><strong>Checkpoint:</strong> derive backprop for a 2-layer net; explain vanishing gradients and residuals.</p>
+    <p><strong>Tools:</strong> Python, NumPy, pandas, matplotlib, scikit-learn, <strong>PyTorch</strong>.</p>
+    <p><a href="module-3.html">Module 3</a> · <a href="interview.html#deep-learning">Deep learning interview Qs</a></p>
+
+    <h2 id="phase2">Phase 2 — NLP → Transformers → LLMs <span class="phase-meta">Weeks 9–16 · Modules 4–5</span></h2>
+    <h3>Weeks 9–11 — NLP &amp; tokenization</h3>
+    <ul class="plan-list">
+      <li>Bag-of-words / TF-IDF → why they fail for meaning</li>
+      <li>Embeddings intuition; what a token is; BPE and vocab tradeoffs</li>
+      <li>The sequence problem: predict the next token</li>
+    </ul>
+    <h3>Weeks 12–14 — Transformers (Module 4)</h3>
+    <ul class="plan-list">
+      <li>Self-attention (Q, K, V) — compute a tiny 3-token example by hand</li>
+      <li>Multi-head attention, positional encoding</li>
+      <li>Encoder vs decoder vs encoder–decoder; GPT-style vs BERT-style</li>
+      <li>Notebook: a minimal transformer block in PyTorch</li>
+    </ul>
+    <h3>Weeks 15–16 — LLMs in practice (Module 5)</h3>
+    <ul class="plan-list">
+      <li>Pretraining vs SFT vs preference tuning (RLHF / DPO)</li>
+      <li>Prompting, few-shot, chain-of-thought — what actually helps</li>
+      <li>RAG: retrieve → context → generate; failure modes</li>
+      <li>Hallucinations and evaluation caveats</li>
+    </ul>
+    <p><strong>Project B (highest interview signal):</strong> RAG over your own notes/blog — chunking,
+      embeddings, retrieval, citations, and a 20-question eval set.</p>
+    <p><strong>Checkpoint:</strong> whiteboard attention, next-token training, and RAG in one sitting.</p>
+    <p><a href="interview.html#llms">LLM / GenAI interview Qs</a></p>
+
+    <h2 id="phase3">Phase 3 — Data &amp; MLOps <span class="phase-meta">Weeks 17–22 · Modules 6–7</span></h2>
+    <h3>Data &amp; features (Module 6)</h3>
+    <ul class="plan-list">
+      <li>Missing values, encoding, scaling, preprocessing leakage</li>
+      <li>Time-based splits; class imbalance; label noise</li>
+      <li>Feature importance / SHAP intuition for explainability rounds</li>
+    </ul>
+    <h3>MLOps &amp; deployment (Module 7)</h3>
+    <ul class="plan-list">
+      <li>Serve a model (e.g. FastAPI); experiment tracking</li>
+      <li>Monitoring: data drift, concept drift, latency, cost</li>
+      <li>LLM ops: prompt versions, eval harness, guardrails, caching</li>
+    </ul>
+    <p><strong>Project C:</strong> deploy Project A or B; document how you’d know it’s rotting in production.</p>
+    <p><strong>Checkpoint:</strong> five-minute answer to “How do you put this in production and detect decay?”</p>
+    <p><a href="interview.html#mlops">MLOps interview Qs</a></p>
+
+    <h2 id="phase4">Phase 4 — Systems &amp; interview polish <span class="phase-meta">Weeks 23–32 · Module 8</span></h2>
+    <p>If you only have six months, compress this into weeks 23–26 and keep drilling.</p>
+    <h3>System designs to practice</h3>
+    <ul class="plan-list">
+      <li>Recommendation feed</li>
+      <li>Semantic search</li>
+      <li>Content moderation</li>
+      <li>RAG customer-support bot</li>
+      <li>Document Q&amp;A over private PDFs</li>
+      <li>Fine-tune vs prompt vs RAG decision framework</li>
+    </ul>
+    <h3>Weekly interview mix</h3>
+    <pre class="result">ML theory     5–10 Qs from the interview bank
+Coding        Easy/medium Python + pandas; occasional “implement X”
+Deep learning Tradeoffs: CNN vs Transformer, LR, overfitting signs
+GenAI         Tokens, context, temperature, RAG vs fine-tune, eval
+Behavioral    Your “learning in public” story — this site is the proof</pre>
+    <p><a href="interview.html#system-design">System design Qs</a></p>
+
+    <h2 id="projects">Portfolio projects</h2>
+    <ul class="plan-list">
+      <li><strong>A — Classic / DL experiment</strong> — clean metrics + failure analysis (Phases 0–1)</li>
+      <li><strong>B — RAG or LLM app</strong> — with an eval set (Phase 2) — do not skip this for GenAI roles</li>
+      <li><strong>C — Deployed slice</strong> — API + monitoring notes (Phase 3)</li>
+      <li><strong>D — System-design write-ups</strong> — short posts for Module 8 designs</li>
+    </ul>
+
+    <h2 id="math">Math you actually need</h2>
+    <p>Do this <em>alongside</em> Phases 1–2 (2–3 hrs/week) — not as a two-month prelude.</p>
+    <ul class="plan-list">
+      <li><strong>Linear algebra</strong> — vectors, matrices, dot products (attention is dots)</li>
+      <li><strong>Probability</strong> — expectation, conditionals, Bayes intuition</li>
+      <li><strong>Calculus</strong> — derivatives and the chain rule (backprop)</li>
+      <li><strong>Stats</strong> — mean/variance, distributions at a high level</li>
+    </ul>
+
+    <h2 id="paths">6-month vs 8-month</h2>
+    <pre class="result">6 months (aggressive)
+  Phases 0→1→2→3, then ~4 weeks of interviews
+  Projects A + B required; C light
+  Math: intuition-heavy
+
+8 months (recommended for “everything in detail”)
+  Full Phase 4 with more reps
+  Projects A + B + C polished
+  Light linear algebra / probability refresh
+  Read one transformer implementation carefully</pre>
+
+    <h2>Mapped to the curriculum</h2>
+    <pre class="result">Module 1  ML Foundations              Phase 0     High
+Module 2  Classic Algorithms          Phase 0     High
+Module 3  Deep Learning               Phase 1     High
+Module 4  Transformers &amp; LLMs         Phase 2     Highest (GenAI)
+Module 5  Generative AI               Phase 2     Highest (GenAI)
+Module 6  Data &amp; Features             Phase 3     Medium–high
+Module 7  MLOps &amp; Deployment          Phase 3     Medium (senior signal)
+Module 8  System Design &amp; Interviews  Phase 4     Highest (onsites)</pre>
+
+    <div class="callout">Right now: merge / finish Module 3 if needed, start a Module 4 outline
+      (attention → transformer → GPT training loop), get comfortable with PyTorch on one small
+      tutorial, and answer five questions a week from the
+      <a href="interview.html">interview bank</a>.</div>
+  </article>
+
+  <nav class="mnav">
+    <a href="index.html">← Back to home</a>
+    <a href="interview.html">Interview questions →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — ROADMAP</p>
+    <p>This plan will evolve as modules go live.
+      <a href="index.html">All modules</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
