@@ -36,7 +36,7 @@
       inherited by neural networks. Master these and deep learning becomes "the same ideas,
       scaled up."</p>
 
-    <h2>The two foundations</h2>
+    <h2 id="foundations">The two foundations</h2>
     <p><strong>Linear regression</strong> predicts a <em>number</em>. It fits the straight line
       of best fit through your data: "given square footage, predict house price." What it's
       really teaching you — fit a function to data by minimising error — is exactly what neural
@@ -48,7 +48,7 @@
       neural network — and an LLM predicting the next token — is essentially massive
       logistic/softmax regression.</b> Learn it small here, recognise it everywhere later.</div>
 
-    <h2>The tree family</h2>
+    <h2 id="trees">The tree family</h2>
     <p><strong>Decision tree</strong> — a flowchart of yes/no questions learned from data.
       Beautifully interpretable: you can read exactly why it decided. But alone it memorises.</p>
     <p><strong>Random forest</strong> — train hundreds of slightly different trees and let them
@@ -58,7 +58,7 @@
       the errors the previous made. This is what XGBoost and LightGBM are, and tuned, they win
       most tabular-data competitions.</p>
 
-    <h2>The result that teaches the most</h2>
+    <h2 id="experiment">The result that teaches the most</h2>
     <p>I ran all four on the same real NYC taxi data from Module 1 — predicting the fare from a
       ride's distance and passenger count. Here's the R² each scored on rides it had never seen
       (1.0 = perfect, 0.0 = no better than guessing the average fare):</p>
@@ -84,7 +84,7 @@ Gradient Boosting    0.903     0.883   &larr; winner</pre>
       cheaper, faster and explainable, and it tells you whether a fancy model's extra few points
       are even worth paying for. Sometimes they are; often they aren't.</p>
 
-    <h2>The map: when to use what</h2>
+    <h2 id="when-to-use">The map: when to use what</h2>
     <p><strong>Structured / tabular data</strong> (rows and columns, spreadsheets, business
       data) → <strong>gradient boosting usually wins.</strong> Classic ML is not dead here; it
       dominates. (Our taxi run is a live example — boosting on top.)</p>
@@ -94,7 +94,7 @@ Gradient Boosting    0.903     0.883   &larr; winner</pre>
       tabular problems around any AI product, and they're the foundation of everything else.
       Not gatekeeping — scaffolding.</div>
 
-    <h2>Try it yourself</h2>
+    <h2 id="try-it">Try it yourself</h2>
     <pre><code>import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -114,7 +114,7 @@ for name, m in [
     m.fit(Xtr, ytr)
     print(name, round(m.score(Xtr, ytr), 3), round(m.score(Xte, yte), 3))</code></pre>
 
-    <h2>Interview questions</h2>
+    <h2 id="interview">Interview questions</h2>
     <p class="topic-note">Also in the full <a href="interview.html#algorithms">interview bank</a>.</p>
     <div class="qa">
       <p class="q">Difference between bagging and boosting?</p>

@@ -35,7 +35,7 @@
       it is <strong>logistic regression stacked on logistic regression</strong>, with a twist
       that lets it draw curves classic models cannot.</p>
 
-    <h2>One neuron, then a layer</h2>
+    <h2 id="neuron">One neuron, then a layer</h2>
     <p>A single <strong>neuron</strong> does three things:</p>
     <p>1. Take inputs. 2. Multiply each by a <strong>weight</strong> and add a bias
       (a weighted sum — the same idea as linear/logistic regression). 3. Pass the result
@@ -49,7 +49,7 @@
       linear layers collapses into <b>one</b> linear layer. The bend is what lets the network
       draw curved, nested decision boundaries.</div>
 
-    <h2>How it learns: loss, gradients, backprop</h2>
+    <h2 id="backprop">How it learns: loss, gradients, backprop</h2>
     <p>You pick a <strong>loss</strong> — a number that says "how wrong am I right now?"
       For classification, cross-entropy is the usual choice (low when the predicted probability
       for the right class is high).</p>
@@ -62,7 +62,7 @@
       at industrial scale. That is the whole trick behind training GPT-sized models — same
       idea, more layers, more data, more compute.</p>
 
-    <h2>The result that teaches the most</h2>
+    <h2 id="experiment">The result that teaches the most</h2>
     <p>Classic ML draws <em>straight</em> (or piecewise-straight) boundaries. A neural net
       can curve. I put that to a brutal test: two interlocking rings of points
       (<code>make_circles</code> in scikit-learn). No straight line can separate them. A
@@ -85,7 +85,7 @@ MLP (32 → 16 hidden)     0.959      0.907   &larr; the curve-drawer wins</pre>
       on problems where the decision boundary is curved or compositional. Pick the tool for
       the shape of the problem.</div>
 
-    <h2>Try it yourself</h2>
+    <h2 id="try-it">Try it yourself</h2>
     <pre><code>from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -104,7 +104,7 @@ for name, m in [
     pipe.fit(Xtr, ytr)
     print(name, round(pipe.score(Xtr, ytr), 3), round(pipe.score(Xte, yte), 3))</code></pre>
 
-    <h2>Why this unlocks GenAI</h2>
+    <h2 id="genai-bridge">Why this unlocks GenAI</h2>
     <p>An LLM is a very deep neural network with a special layer type called
       <strong>attention</strong> (Module 4). Everything else you just learned still applies:
       weights, activations, a loss (next-token prediction), gradients, backprop. Pretraining
@@ -113,7 +113,7 @@ for name, m in [
     <p>Once you can say "a transformer is a deep net trained with backprop to predict the next
       token," the mystique drops — and the interview answers get sharper.</p>
 
-    <h2>Interview questions</h2>
+    <h2 id="interview">Interview questions</h2>
     <p class="topic-note">Also in the full <a href="interview.html#deep-learning">interview bank</a>.</p>
     <div class="qa">
       <p class="q">What does an activation function do, and why do we need one?</p>

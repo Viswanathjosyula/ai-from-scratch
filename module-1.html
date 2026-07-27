@@ -30,7 +30,7 @@
   </div>
 
   <article>
-    <h2>The core mental flip</h2>
+    <h2 id="mental-flip">The core mental flip</h2>
     <p>In <strong>traditional programming</strong>, you write the rules.
       <code>if temperature &gt; 38: print("fever")</code> — you, the human, know the rule and
       type it out.</p>
@@ -41,7 +41,7 @@
     <div class="callout">An LLM is the extreme version of this: nobody wrote rules for grammar
       or facts. It learned the patterns from billions of text examples.</div>
 
-    <h2>The three ways machines learn</h2>
+    <h2 id="three-ways">The three ways machines learn</h2>
     <p><strong>Supervised learning</strong> — the data comes with the right answers (labels).
       "Here are emails marked spam / not-spam, learn to predict." This is most practical ML.
       <em>The fine-tuning stage of an LLM is supervised.</em></p>
@@ -52,7 +52,7 @@
     <p><strong>Reinforcement learning</strong> — learn by trial and reward.
       <em>The "RL" in RLHF, where a model is rewarded for responses humans prefer.</em></p>
 
-    <h2>The one idea everything hinges on</h2>
+    <h2 id="train-test">The one idea everything hinges on</h2>
     <p>Every ML project follows the same path: <strong>data → split → train → evaluate →
       predict.</strong> The load-bearing step is the <strong>train/test split</strong>. You
       never judge a model on data it learned from — that's like grading students on the exact
@@ -62,7 +62,7 @@
       test questions leaked into training data, the scores mean nothing. Same principle,
       billion-dollar stakes.</div>
 
-    <h2>Overfitting: the central trap</h2>
+    <h2 id="overfitting">Overfitting: the central trap</h2>
     <p>The best way to feel this is to run it, so I built a tiny experiment on real NYC taxi
       trips: predict a ride's <strong>fare</strong> from its <strong>distance</strong> and
       <strong>passenger count</strong>, using decision trees that get steadily more complex
@@ -125,7 +125,7 @@ for depth in [1, 2, 3, 5, 8, 12, None]:
       tree's test score can go <em>negative</em> — a model literally worse than guessing the
       average.</p>
 
-    <h2>Interview questions</h2>
+    <h2 id="interview">Interview questions</h2>
     <p class="topic-note">Also in the full <a href="interview.html#foundations">interview bank</a>.</p>
     <div class="qa">
       <p class="q">Difference between supervised and unsupervised learning?</p>
