@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Module 3 — Deep Learning | AI from scratch</title>
-<meta name="description" content="Neural networks and backprop — how everything scales up into the engine behind modern AI.">
+<meta name="description" content="Industry-depth deep learning in plain English: neurons, activations, loss, backprop, optimizers, regularization, CNNs, and the bridge to GenAI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -17,56 +17,120 @@
     <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
     <nav>
       <a href="index.html#curriculum">Curriculum</a>
-      <a href="index.html#about">About</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="interview.html">Interviews</a>
     </nav>
   </header>
 
   <div class="mhead">
     <p class="kicker">Module 03 · Deep Learning</p>
     <h1>The same ideas — stacked until they get smart</h1>
-    <p class="stand">Neural networks and backpropagation: how weighted sums, a little
-      non-linearity, and "nudge the weights downhill" become the engine behind modern AI.</p>
+    <p class="stand">Neural networks end-to-end: neurons, activations, loss, backpropagation,
+      optimizers, regularisation, a taste of CNNs — and why this is the engine under modern AI.</p>
   </div>
 
   <article>
+    <ul class="toc">
+      <li><a href="#bridge">From classic ML to deep nets</a></li>
+      <li><a href="#neuron">One neuron, then a layer</a></li>
+      <li><a href="#activations">Activations (the bend that makes depth useful)</a></li>
+      <li><a href="#backprop">Loss, gradients, backprop, optimizers</a></li>
+      <li><a href="#regularization">Regularisation &amp; training hygiene</a></li>
+      <li><a href="#experiment">Experiment: logistic vs MLP on interlocking rings</a></li>
+      <li><a href="#cnn">CNNs in one page (vision intuition)</a></li>
+      <li><a href="#genai-bridge">Why this unlocks GenAI</a></li>
+      <li><a href="#try-it">Try it yourself</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="bridge">From classic ML to deep nets</h2>
     <p>Module 2 ended with a map: tabular data → classic ML; images, text, audio → deep
-      learning. This module is the bridge. A neural network is not a new species of magic —
-      it is <strong>logistic regression stacked on logistic regression</strong>, with a twist
-      that lets it draw curves classic models cannot.</p>
+      learning. A neural network is not a new species of magic — it is
+      <strong>logistic regression stacked on logistic regression</strong>, with a non-linear
+      twist that lets it draw curves classic models cannot.</p>
+    <p>Industry vocabulary you’ll hear:</p>
+    <pre class="result">parameters     the weights &amp; biases being learned (can be billions)
+forward pass   compute predictions from inputs
+loss           scalar “how wrong am I?”
+backward pass  compute gradients of the loss w.r.t. each parameter
+update         nudge parameters a step downhill (optimizer)</pre>
 
-    <h2>One neuron, then a layer</h2>
+    <h2 id="neuron">One neuron, then a layer</h2>
     <p>A single <strong>neuron</strong> does three things:</p>
-    <p>1. Take inputs. 2. Multiply each by a <strong>weight</strong> and add a bias
-      (a weighted sum — the same idea as linear/logistic regression). 3. Pass the result
-      through an <strong>activation</strong> — a small bend, like ReLU
-      (<code>max(0, x)</code>) or a sigmoid S-curve.</p>
-    <p>One neuron alone is basically logistic regression. The leap is stacking many of them
-      into a <strong>layer</strong>, then stacking layers. Each layer's outputs become the next
-      layer's inputs. Early layers learn simple pieces; later layers compose them into richer
-      ideas — edges → shapes → digits, or sounds → phonemes → words.</p>
-    <div class="callout">The activation is the load-bearing trick. Without it, a stack of
-      linear layers collapses into <b>one</b> linear layer. The bend is what lets the network
-      draw curved, nested decision boundaries.</div>
+    <pre class="result">1. take inputs x₁, x₂, …
+2. weighted sum   z = w₁x₁ + w₂x₂ + … + b
+3. activation     a = f(z)     e.g. ReLU: max(0, z)</pre>
+    <p>One neuron alone is basically linear/logistic regression. The leap is stacking many
+      neurons into a <strong>layer</strong>, then stacking layers into a
+      <strong>multilayer perceptron (MLP)</strong>. Each layer’s outputs become the next
+      layer’s inputs.</p>
+    <p><strong>Width</strong> = neurons per layer. <strong>Depth</strong> = number of layers.
+      Early layers tend to learn simple pieces; later layers compose them — edges → shapes →
+      objects, or characters → words → ideas. That compositional hierarchy is why deep nets
+      crush unstructured data.</p>
+    <div class="callout">Without non-linear activations, a stack of linear layers collapses
+      into <b>one</b> linear layer — no matter how deep. The bend is what makes depth useful.</div>
 
-    <h2>How it learns: loss, gradients, backprop</h2>
-    <p>You pick a <strong>loss</strong> — a number that says "how wrong am I right now?"
-      For classification, cross-entropy is the usual choice (low when the predicted probability
-      for the right class is high).</p>
-    <p>Then you nudge every weight a tiny step that <em>reduces</em> that loss. The direction
-      of the nudge is the <strong>gradient</strong> — calculus's answer to "which way is
-      downhill?" Doing this repeatedly is <strong>gradient descent</strong>.</p>
-    <p><strong>Backpropagation</strong> is just an efficient way to compute those gradients
-      through a deep stack: start at the loss, walk <em>backward</em> through each layer,
-      and ask "how much did <em>this</em> weight contribute to the error?" Chain rule, applied
-      at industrial scale. That is the whole trick behind training GPT-sized models — same
-      idea, more layers, more data, more compute.</p>
+    <h2 id="activations">Activations (the bend that makes depth useful)</h2>
+    <pre class="result">ReLU      max(0, z)     default for hidden layers; sparse, fast
+Sigmoid   1/(1+e^(−z))  classic; saturates → vanishing gradients
+Tanh      similar S-curve, zero-centered
+Softmax   multi-class probabilities at the output (sum to 1)
+GELU/SiLU smoother ReLU cousins — common in transformers</pre>
+    <p>Interview habit: say <em>what you use where</em> — ReLU (or GELU) in hidden layers,
+      sigmoid/softmax at the output depending on binary vs multi-class.</p>
 
-    <h2>The result that teaches the most</h2>
-    <p>Classic ML draws <em>straight</em> (or piecewise-straight) boundaries. A neural net
-      can curve. I put that to a brutal test: two interlocking rings of points
-      (<code>make_circles</code> in scikit-learn). No straight line can separate them. A
-      logistic regression — Module 2's classifier ancestor — is almost helpless. A tiny
-      multilayer perceptron (MLP) with two hidden layers is not.</p>
+    <h2 id="backprop">Loss, gradients, backprop, optimizers</h2>
+    <h3>Loss — the score you minimise</h3>
+    <ul class="plan-list">
+      <li><strong>MSE / MAE</strong> — regression (numbers)</li>
+      <li><strong>Binary cross-entropy</strong> — yes/no classification</li>
+      <li><strong>Categorical cross-entropy</strong> — multi-class (including next-token
+        prediction in LLMs — a giant softmax over the vocabulary)</li>
+    </ul>
+    <h3>Gradient descent — nudge downhill</h3>
+    <p>The <strong>gradient</strong> says which way the loss increases fastest. You step the
+      opposite way. Step size = <strong>learning rate</strong>.</p>
+    <pre class="result">too high  → loss explodes or oscillates
+too low   → training crawls; may stall
+practice  → try a range; use schedules; watch curves</pre>
+    <h3>Minibatch SGD and Adam</h3>
+    <p><strong>Batch</strong> = how many examples per update. Full-batch is rare.
+      <strong>Minibatch SGD</strong> estimates the gradient from a small batch — noisier, but
+      faster and often generalises better. An <strong>epoch</strong> = one full pass through
+      the training set.</p>
+    <p><strong>Adam</strong> (and friends) adapt the step per-parameter using momentum-like
+      statistics. Default starting point for many deep-learning projects; SGD-with-momentum
+      still wins in some vision recipes. Know both names.</p>
+    <h3>Backpropagation</h3>
+    <p><strong>Backprop</strong> is just an efficient application of the chain rule:
+      start from the loss, walk <em>backward</em> through each layer, and ask how much each
+      weight contributed to the error. Frameworks (PyTorch, JAX) do this with autograd —
+      you write the forward pass; they build the backward graph.</p>
+    <div class="callout">GPT-scale training is still this loop: forward → loss → backward →
+      optimizer step — on mountains of text, with fancy layers (attention) and enormous
+      compute. Same skeleton you just learned.</div>
+
+    <h2 id="regularization">Regularisation &amp; training hygiene</h2>
+    <ul class="plan-list">
+      <li><strong>Dropout</strong> — randomly zero units during training so the net can’t
+        co-adapt; a regulariser.</li>
+      <li><strong>Weight decay (L2)</strong> — keep weights small.</li>
+      <li><strong>Batch / layer normalisation</strong> — stabilise activations; faster, more
+        reliable training (layer norm is everywhere in transformers).</li>
+      <li><strong>Early stopping</strong> — watch validation loss; stop when it stops improving.</li>
+      <li><strong>Data augmentation</strong> — especially vision/audio: more diversity without
+        new labels.</li>
+    </ul>
+    <h3>Vanishing &amp; exploding gradients</h3>
+    <p>In very deep stacks, gradients can shrink toward zero (early layers stop learning) or
+      explode. Mitigations you’ll cite in interviews: ReLU, careful init, normalisation,
+      <strong>residual connections</strong> (skip connections — the trick behind ResNets and
+      used inside transformers).</p>
+
+    <h2 id="experiment">Experiment: logistic vs MLP on interlocking rings</h2>
+    <p>Classic linear models draw straight boundaries. A neural net can curve. Two interlocking
+      rings of points (<code>make_circles</code>): no straight line separates them.</p>
     <pre class="result">model                  train acc   test acc
 Logistic Regression      0.607      0.563   &larr; barely above a coin flip
 MLP (32 → 16 hidden)     0.959      0.907   &larr; the curve-drawer wins</pre>
@@ -74,17 +138,41 @@ MLP (32 → 16 hidden)     0.959      0.907   &larr; the curve-drawer wins</pre>
     <a class="run-btn" href="https://colab.research.google.com/github/viswanathjosyula/ai-from-scratch/blob/main/neural-nets.ipynb" target="_blank" rel="noopener">
       <span class="play">▶</span> Run this yourself in Colab
     </a>
-    <p class="run-note">Synthetic data, fixed seed — you'll get the same two accuracy numbers.</p>
+    <p class="run-note">Synthetic data, fixed seed — same two accuracy numbers.</p>
 
-    <p>That ~34-point gap is the whole point of deep learning in one screenshot: when the
-      pattern is <em>non-linear</em>, stacking neurons with activations lets the model invent
-      the curves it needs. Logistic regression cannot invent them; it can only draw a line.</p>
+    <p>That ~34-point gap is deep learning in one screenshot: when the pattern is
+      <em>non-linear</em>, stacked activations invent the curves. Logistic regression cannot.</p>
     <div class="callout">On <b>tabular</b> data, remember Module 2 — gradient boosting often
-      still wins. Neural nets earn their keep on unstructured data (images, text, audio) and
-      on problems where the decision boundary is curved or compositional. Pick the tool for
-      the shape of the problem.</div>
+      still wins. Neural nets earn their keep on unstructured data and compositional/curved
+      problems. Pick the tool for the shape of the problem.</div>
 
-    <h2>Try it yourself</h2>
+    <h2 id="cnn">CNNs in one page (vision intuition)</h2>
+    <p><strong>Convolutional neural nets</strong> slide small filters over an image to detect
+      local patterns (edges, textures) while sharing the same weights across positions — fewer
+      parameters than a giant MLP on raw pixels, and translation-aware.</p>
+    <ul class="plan-list">
+      <li><strong>Convolution</strong> — detect local features</li>
+      <li><strong>Pooling</strong> — downsample; keep what matters</li>
+      <li><strong>Stacking</strong> — edges → parts → objects</li>
+    </ul>
+    <p>Practice project (roadmap week 6): classify Fashion-MNIST or CIFAR-10 in PyTorch.
+      You’ll reuse the same training loop — only the layer types change. Transformers later
+      replace a lot of this for language (and increasingly for vision), but CNN intuition
+      still shows up in interviews and hybrid systems.</p>
+
+    <h2 id="genai-bridge">Why this unlocks GenAI</h2>
+    <p>An LLM is a very deep neural network with a special layer called
+      <strong>attention</strong> (Module 4). Everything else still applies: weights, activations,
+      a loss (next-token cross-entropy), gradients, backprop, optimizers, regularisation.</p>
+    <ul class="plan-list">
+      <li><strong>Pretraining</strong> — gradient descent on a mountain of text</li>
+      <li><strong>Fine-tuning (SFT)</strong> — same loop on sharper instruction data</li>
+      <li><strong>Preference tuning (RLHF / DPO)</strong> — nudge toward answers humans prefer</li>
+    </ul>
+    <p>Once you can say “a transformer is a deep net trained with backprop to predict the next
+      token,” the mystique drops — and interview answers get sharper.</p>
+
+    <h2 id="try-it">Try it yourself</h2>
     <pre><code>from sklearn.datasets import make_circles
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -103,39 +191,49 @@ for name, m in [
     pipe.fit(Xtr, ytr)
     print(name, round(pipe.score(Xtr, ytr), 3), round(pipe.score(Xte, yte), 3))</code></pre>
 
-    <h2>Why this unlocks GenAI</h2>
-    <p>An LLM is a very deep neural network with a special layer type called
-      <strong>attention</strong> (Module 4). Everything else you just learned still applies:
-      weights, activations, a loss (next-token prediction), gradients, backprop. Pretraining
-      is gradient descent on a mountain of text. Fine-tuning is the same process on a smaller,
-      sharper dataset. RLHF adds a reward signal on top.</p>
-    <p>Once you can say "a transformer is a deep net trained with backprop to predict the next
-      token," the mystique drops — and the interview answers get sharper.</p>
-
-    <h2>Interview questions</h2>
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the full <a href="interview.html#deep-learning">interview bank</a>.</p>
     <div class="qa">
       <p class="q">What does an activation function do, and why do we need one?</p>
       <p class="a">It adds a non-linearity after the weighted sum. Without it, stacked layers
         collapse into a single linear transform and cannot model curved boundaries. ReLU is
-        the common default: simple, sparse, and trains well.</p>
+        the common default for hidden layers.</p>
     </div>
     <div class="qa">
       <p class="q">Explain backpropagation in one breath.</p>
       <p class="a">Compute the loss, then use the chain rule to push gradients backward through
         each layer so every weight learns how much it contributed to the error — then take a
-        small step downhill (gradient descent).</p>
+        small step downhill (optimizer / gradient descent).</p>
+    </div>
+    <div class="qa">
+      <p class="q">SGD vs Adam?</p>
+      <p class="a">SGD (often with momentum) takes steps from minibatch gradients. Adam adapts
+        step sizes per parameter using running averages of gradients — usually converges faster
+        out of the box; SGD still preferred in some vision training recipes.</p>
     </div>
     <div class="qa">
       <p class="q">When would you still prefer gradient boosting over a neural net?</p>
-      <p class="a">Structured/tabular data, smaller datasets, tight latency budgets, or when
-        you need strong out-of-the-box baselines. Deep nets shine on unstructured, high-dimensional
-        inputs where compositionality matters.</p>
+      <p class="a">Structured/tabular data, smaller datasets, tight latency budgets, or strong
+        out-of-the-box baselines. Deep nets shine on unstructured, high-dimensional,
+        compositional inputs.</p>
     </div>
     <div class="qa">
       <p class="q">What is the vanishing gradient problem?</p>
-      <p class="a">In very deep stacks, gradients can shrink toward zero as they flow backward,
-        so early layers stop learning. Mitigations: ReLU, residual connections, better init,
-        normalization — all of which show up in modern transformers.</p>
+      <p class="a">Gradients shrink toward zero as they flow backward through deep stacks, so
+        early layers stop learning. Mitigations: ReLU, residual connections, better init,
+        normalisation — all common in modern transformers.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Batch norm vs dropout — what problem does each attack?</p>
+      <p class="a">Batch/layer norm stabilises activations (faster, steadier training). Dropout
+        randomly zeros units during training to reduce co-adaptation (regularisation).
+        Complementary, not substitutes.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why share weights in a CNN?</p>
+      <p class="a">The same local pattern (an edge, a texture) can appear anywhere in the image.
+        Shared filters detect it efficiently with far fewer parameters than a dense MLP on
+        pixels, and buy translation awareness.</p>
     </div>
   </article>
 
@@ -147,7 +245,8 @@ for name, m in [
   <footer>
     <p class="foot-mono">AI FROM SCRATCH — MODULE 03</p>
     <p>Spotted a mistake? Tell me — corrections are the point.
-      <a href="index.html">Back to all modules</a></p>
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase1">Roadmap Phase 1</a></p>
   </footer>
 
 </div>

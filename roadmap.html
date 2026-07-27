@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6–8 month roadmap | AI from scratch</title>
+<meta name="description" content="A detailed 6–8 month plan to learn AI from scratch and become interview-ready — mapped to the eight curriculum modules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Plan · 6 to 8 months</p>
+    <h1>From zero to interview-ready</h1>
+    <p class="stand">A detailed path through the eight modules — learn deeply, build projects,
+      write everything down, and drill the questions that actually show up in ML / GenAI interviews.</p>
+  </div>
+
+  <article>
+    <p>This roadmap assumes ~12–15 hours a week (stretch to ~20 if you can). The rule that
+      makes it stick: <strong>every major concept becomes a short write-up on this site plus
+      one runnable notebook.</strong> If you skip writing, you will not retain it at interview depth.</p>
+
+    <div class="callout">By month 6–8 you should be able to: explain any core idea in plain English,
+      implement small experiments (sklearn + PyTorch), answer ML / DL / LLM questions with tradeoffs,
+      walk through 1–2 portfolio projects, and handle a light GenAI system-design round.</div>
+
+    <h2 class="sec-label" style="margin-top:8px;padding-top:32px;border-top:1px solid var(--line)">On this page</h2>
+    <ul class="toc">
+      <li><a href="#concepts">Concept index</a> — every idea with lesson + drill links</li>
+      <li><a href="#weekly">Weekly template</a></li>
+      <li><a href="#phase0">Phase 0 — Foundations (weeks 1–3)</a></li>
+      <li><a href="#phase1">Phase 1 — Deep Learning (weeks 4–8)</a></li>
+      <li><a href="#phase2">Phase 2 — Transformers &amp; LLMs (weeks 9–16)</a></li>
+      <li><a href="#phase3">Phase 3 — Data &amp; MLOps (weeks 17–22)</a></li>
+      <li><a href="#phase4">Phase 4 — Systems &amp; interviews (weeks 23–32)</a></li>
+      <li><a href="#projects">Portfolio projects</a></li>
+      <li><a href="#math">Math you actually need</a></li>
+      <li><a href="#paths">6-month vs 8-month</a></li>
+    </ul>
+
+    <div class="callout">Each concept below has two links when available:
+      <b>Lesson</b> → the module section that teaches it, and <b>Drill</b> → interview questions.
+      “Soon” means the module isn’t published yet — drill from the interview bank meanwhile.</div>
+
+    <h2 id="concepts">Concept index</h2>
+    <p>Jump straight to a concept. Live lessons link into Modules 1–3; later topics link to the
+      interview bank until those modules ship.</p>
+
+    <h3>Foundations · live</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Programming vs learning (the mental flip)</span>
+        <span class="concept-links"><a href="module-1.html#mental-flip">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Supervised / unsupervised / reinforcement learning</span>
+        <span class="concept-links"><a href="module-1.html#three-ways">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Train / validation / test split &amp; leakage</span>
+        <span class="concept-links"><a href="module-1.html#train-test">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Overfitting, underfitting, bias–variance</span>
+        <span class="concept-links"><a href="module-1.html#overfitting">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Linear &amp; logistic regression</span>
+        <span class="concept-links"><a href="module-2.html#foundations">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Decision trees, bagging, boosting</span>
+        <span class="concept-links"><a href="module-2.html#trees">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Tabular vs unstructured — when to use what</span>
+        <span class="concept-links"><a href="module-2.html#when-to-use">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+    </div>
+
+    <h3>Deep learning · live + extend</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Neurons, layers, activations</span>
+        <span class="concept-links"><a href="module-3.html#neuron">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Loss, gradients, backpropagation</span>
+        <span class="concept-links"><a href="module-3.html#backprop">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Why non-linearity matters (MLP vs logistic)</span>
+        <span class="concept-links"><a href="module-3.html#experiment">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Deep learning → GenAI bridge</span>
+        <span class="concept-links"><a href="module-3.html#genai-bridge">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">CNNs (conv, pool, vision)</span>
+        <span class="concept-links"><a href="module-3.html#cnn">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Regularization: dropout, batch norm, learning rate</span>
+        <span class="concept-links"><a href="module-3.html#regularization">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">RNNs → why attention won</span>
+        <span class="concept-links"><span class="soon-label">Module soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+
+    <h3>Transformers &amp; GenAI · expanding</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Tokenization &amp; embeddings</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Self-attention (Q, K, V)</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Transformer block &amp; GPT vs BERT</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Pretraining, SFT, RLHF / DPO</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">RAG, hallucinations, LLM eval</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Temperature, top-p, prompting</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+
+    <h3>Data, MLOps, systems · expanding</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Data leakage, splits, imbalance</span>
+        <span class="concept-links"><span class="soon-label">Mod 6 soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Feature importance / explainability</span>
+        <span class="concept-links"><span class="soon-label">Mod 6 soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Serving, monitoring, drift</span>
+        <span class="concept-links"><span class="soon-label">Mod 7 soon</span><a href="interview.html#mlops">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">RAG bot / search / moderation designs</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+    </div>
+
+    <h2 id="weekly">Weekly template</h2>
+    <p>Repeat every week:</p>
+    <pre class="result">Learn     40%   one concept deeply
+Build     30%   notebook or project slice
+Write     15%   publish on this site
+Drill     15%   interview Q&amp;A out loud, timed</pre>
+    <p>Drill bank: <a href="interview.html">Interview questions</a> — answer five per week in writing.</p>
+
+    <h2 id="phase0">Phase 0 — Foundations <span class="phase-meta">Weeks 1–3 · Modules 1–2</span></h2>
+    <p>You may already have most of this live. Treat it as a refresh until you can teach it.</p>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">The mental flip — rules vs learning from examples</span>
+        <span class="concept-links"><a href="module-1.html#mental-flip">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Supervised / unsupervised / RL (+ LLM analogies)</span>
+        <span class="concept-links"><a href="module-1.html#three-ways">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Train / val / test, leakage, metrics</span>
+        <span class="concept-links"><a href="module-1.html#train-test">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Overfitting &amp; bias–variance (taxi experiment)</span>
+        <span class="concept-links"><a href="module-1.html#overfitting">Lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Linear &amp; logistic regression</span>
+        <span class="concept-links"><a href="module-2.html#foundations">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Trees, random forests, gradient boosting</span>
+        <span class="concept-links"><a href="module-2.html#trees">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">When classic ML beats deep learning</span>
+        <span class="concept-links"><a href="module-2.html#when-to-use">Lesson</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+    </div>
+    <p><strong>Checkpoint:</strong> explain overfitting and bagging vs boosting on a whiteboard in under five minutes.</p>
+    <p><a href="module-1.html">Module 1</a> · <a href="module-2.html">Module 2</a> ·
+      <a href="interview.html#foundations">Foundation Qs</a> ·
+      <a href="interview.html#algorithms">Algorithm Qs</a></p>
+
+    <h2 id="phase1">Phase 1 — Deep Learning core <span class="phase-meta">Weeks 4–8 · Module 3</span></h2>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name"><strong>Week 4</strong> — Neurons, layers, activations</span>
+        <span class="concept-links"><a href="module-3.html#neuron">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name"><strong>Week 5</strong> — Loss, gradient descent, backprop</span>
+        <span class="concept-links"><a href="module-3.html#backprop">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name"><strong>Week 5</strong> — Non-linear boundaries (circles experiment)</span>
+        <span class="concept-links"><a href="module-3.html#experiment">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name"><strong>Week 6</strong> — CNNs (Fashion-MNIST / CIFAR in PyTorch)</span>
+        <span class="concept-links"><a href="module-3.html#cnn">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name"><strong>Week 7</strong> — Dropout, batch norm, learning rates</span>
+        <span class="concept-links"><a href="module-3.html#regularization">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name"><strong>Week 8</strong> — RNNs (light) → why attention replaced them</span>
+        <span class="concept-links"><span class="soon-label">Write-up soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">How deep learning unlocks GenAI</span>
+        <span class="concept-links"><a href="module-3.html#genai-bridge">Lesson</a><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+    <p><strong>Project A:</strong> image or tabular classifier with clean splits, metrics, and a short failure write-up.</p>
+    <p><strong>Checkpoint:</strong> derive backprop for a 2-layer net; explain vanishing gradients and residuals.</p>
+    <p><strong>Tools:</strong> Python, NumPy, pandas, matplotlib, scikit-learn, <strong>PyTorch</strong>.</p>
+    <p><a href="module-3.html">Module 3</a> · <a href="interview.html#deep-learning">Deep learning Qs</a></p>
+
+    <h2 id="phase2">Phase 2 — NLP → Transformers → LLMs <span class="phase-meta">Weeks 9–16 · Modules 4–5</span></h2>
+    <h3>Weeks 9–11 — NLP &amp; tokenization</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Bag-of-words / TF-IDF and their limits</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Embeddings, tokens, BPE, vocab tradeoffs</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Next-token prediction as the core objective</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+    <h3>Weeks 12–14 — Transformers (Module 4)</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Self-attention (Q, K, V) — tiny example by hand</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Multi-head attention &amp; positional encoding</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Encoder / decoder / GPT-style vs BERT-style</span>
+        <span class="concept-links"><span class="soon-label">Mod 4 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+    <h3>Weeks 15–16 — LLMs in practice (Module 5)</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Pretraining vs SFT vs RLHF / DPO</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Prompting, few-shot, chain-of-thought</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">RAG pipeline &amp; failure modes</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Hallucinations &amp; evaluation</span>
+        <span class="concept-links"><span class="soon-label">Mod 5 soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+    </div>
+    <p><strong>Project B (highest interview signal):</strong> RAG over your own notes/blog — chunking,
+      embeddings, retrieval, citations, and a 20-question eval set.</p>
+    <p><strong>Checkpoint:</strong> whiteboard attention, next-token training, and RAG in one sitting.</p>
+    <p><a href="interview.html#llms">LLM / GenAI interview Qs</a></p>
+
+    <h2 id="phase3">Phase 3 — Data &amp; MLOps <span class="phase-meta">Weeks 17–22 · Modules 6–7</span></h2>
+    <h3>Data &amp; features (Module 6)</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Missing values, encoding, scaling, leakage</span>
+        <span class="concept-links"><span class="soon-label">Mod 6 soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Time-based splits, imbalance, label noise</span>
+        <span class="concept-links"><span class="soon-label">Mod 6 soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Feature importance / SHAP intuition</span>
+        <span class="concept-links"><span class="soon-label">Mod 6 soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+    </div>
+    <h3>MLOps &amp; deployment (Module 7)</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Serving (API) &amp; experiment tracking</span>
+        <span class="concept-links"><span class="soon-label">Mod 7 soon</span><a href="interview.html#mlops">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Monitoring: drift, latency, cost</span>
+        <span class="concept-links"><span class="soon-label">Mod 7 soon</span><a href="interview.html#mlops">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">LLM ops: prompt versions, eval, guardrails</span>
+        <span class="concept-links"><span class="soon-label">Mod 7 soon</span><a href="interview.html#mlops">Drill</a></span>
+      </div>
+    </div>
+    <p><strong>Project C:</strong> deploy Project A or B; document how you’d know it’s rotting in production.</p>
+    <p><strong>Checkpoint:</strong> five-minute answer to “How do you put this in production and detect decay?”</p>
+    <p><a href="interview.html#data">Data Qs</a> · <a href="interview.html#mlops">MLOps Qs</a></p>
+
+    <h2 id="phase4">Phase 4 — Systems &amp; interview polish <span class="phase-meta">Weeks 23–32 · Module 8</span></h2>
+    <p>If you only have six months, compress this into weeks 23–26 and keep drilling.</p>
+    <h3>System designs to practice</h3>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">RAG customer-support bot</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Semantic / hybrid search</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Content moderation pipeline</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Fine-tune vs prompt vs RAG decision</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Recommendation feed</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Document Q&amp;A over private PDFs</span>
+        <span class="concept-links"><span class="soon-label">Mod 8 soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+    </div>
+    <h3>Weekly interview mix</h3>
+    <pre class="result">ML theory     5–10 Qs from the interview bank
+Coding        Easy/medium Python + pandas; occasional “implement X”
+Deep learning Tradeoffs: CNN vs Transformer, LR, overfitting signs
+GenAI         Tokens, context, temperature, RAG vs fine-tune, eval
+Behavioral    Your “learning in public” story — this site is the proof</pre>
+    <p><a href="interview.html#system-design">System design Qs</a> ·
+      <a href="interview.html">Full interview bank</a></p>
+
+    <h2 id="projects">Portfolio projects</h2>
+    <ul class="plan-list">
+      <li><strong>A — Classic / DL experiment</strong> — clean metrics + failure analysis (Phases 0–1)</li>
+      <li><strong>B — RAG or LLM app</strong> — with an eval set (Phase 2) — do not skip this for GenAI roles</li>
+      <li><strong>C — Deployed slice</strong> — API + monitoring notes (Phase 3)</li>
+      <li><strong>D — System-design write-ups</strong> — short posts for Module 8 designs</li>
+    </ul>
+
+    <h2 id="math">Math you actually need</h2>
+    <p>Do this <em>alongside</em> Phases 1–2 (2–3 hrs/week) — not as a two-month prelude.</p>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Linear algebra — vectors, matrices, dot products</span>
+        <span class="concept-links"><a href="module-3.html#backprop">Related lesson</a><a href="interview.html#llms">Attention drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Probability — expectation, conditionals, Bayes</span>
+        <span class="concept-links"><a href="module-1.html#three-ways">Related lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Calculus — derivatives &amp; chain rule (backprop)</span>
+        <span class="concept-links"><a href="module-3.html#backprop">Lesson</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Stats — mean/variance, distributions (high level)</span>
+        <span class="concept-links"><a href="module-1.html#overfitting">Related lesson</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+    </div>
+
+    <h2 id="paths">6-month vs 8-month</h2>
+    <pre class="result">6 months (aggressive)
+  Phases 0→1→2→3, then ~4 weeks of interviews
+  Projects A + B required; C light
+  Math: intuition-heavy
+
+8 months (recommended for “everything in detail”)
+  Full Phase 4 with more reps
+  Projects A + B + C polished
+  Light linear algebra / probability refresh
+  Read one transformer implementation carefully</pre>
+
+    <h2>Mapped to the curriculum</h2>
+    <div class="concept-list">
+      <div class="concept">
+        <span class="concept-name">Module 1 — ML Foundations · Phase 0 · High</span>
+        <span class="concept-links"><a href="module-1.html">Open</a><a href="interview.html#foundations">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 2 — Classic Algorithms · Phase 0 · High</span>
+        <span class="concept-links"><a href="module-2.html">Open</a><a href="interview.html#algorithms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 3 — Deep Learning · Phase 1 · High</span>
+        <span class="concept-links"><a href="module-3.html">Open</a><a href="interview.html#deep-learning">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 4 — Transformers &amp; LLMs · Phase 2 · Highest</span>
+        <span class="concept-links"><span class="soon-label">Soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 5 — Generative AI · Phase 2 · Highest</span>
+        <span class="concept-links"><span class="soon-label">Soon</span><a href="interview.html#llms">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 6 — Data &amp; Features · Phase 3 · Medium–high</span>
+        <span class="concept-links"><span class="soon-label">Soon</span><a href="interview.html#data">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 7 — MLOps &amp; Deployment · Phase 3 · Medium</span>
+        <span class="concept-links"><span class="soon-label">Soon</span><a href="interview.html#mlops">Drill</a></span>
+      </div>
+      <div class="concept">
+        <span class="concept-name">Module 8 — System Design &amp; Interviews · Phase 4 · Highest</span>
+        <span class="concept-links"><span class="soon-label">Soon</span><a href="interview.html#system-design">Drill</a></span>
+      </div>
+    </div>
+
+    <div class="callout">Right now: work Phase 0–1 concepts with live lesson links, start a Module 4 outline
+      (attention → transformer → GPT training loop), get comfortable with PyTorch on one small
+      tutorial, and answer five questions a week from the
+      <a href="interview.html">interview bank</a>.</div>
+  </article>
+
+  <nav class="mnav">
+    <a href="index.html">← Back to home</a>
+    <a href="interview.html">Interview questions →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — ROADMAP</p>
+    <p>This plan will evolve as modules go live.
+      <a href="index.html">All modules</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
