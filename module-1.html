@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Module 1 — ML Foundations | AI from scratch</title>
-<meta name="description" content="What machine learning actually is, the three ways it learns, and the trap that breaks every model: overfitting.">
+<meta name="description" content="Industry-depth ML foundations in plain English: learning types, the full pipeline, metrics, train/val/test, overfitting, and data leakage.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -25,11 +25,22 @@
   <div class="mhead">
     <p class="kicker">Module 01 · ML Foundations</p>
     <h1>The bedrock: how machines actually learn</h1>
-    <p class="stand">What machine learning really is, the three ways it learns, and the one
-      trap that quietly breaks every model — overfitting.</p>
+    <p class="stand">What machine learning really is, how industry teams train and judge models,
+      and the trap that quietly breaks almost every first attempt — overfitting.</p>
   </div>
 
   <article>
+    <ul class="toc">
+      <li><a href="#mental-flip">The core mental flip</a></li>
+      <li><a href="#three-ways">How machines learn (the map interviewers use)</a></li>
+      <li><a href="#pipeline">The production mental model: data → model → eval → ship</a></li>
+      <li><a href="#train-test">Train / validation / test (and why splits lie)</a></li>
+      <li><a href="#metrics">Metrics: pick the score that matches the business</a></li>
+      <li><a href="#overfitting">Overfitting: the central trap (+ live experiment)</a></li>
+      <li><a href="#leakage">Data leakage: the silent interview killer</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
     <h2 id="mental-flip">The core mental flip</h2>
     <p>In <strong>traditional programming</strong>, you write the rules.
       <code>if temperature &gt; 38: print("fever")</code> — you, the human, know the rule and
@@ -38,41 +49,113 @@
       You hand it 10,000 patient records labelled "fever / no fever" and it works out the
       threshold itself. You're not programming the logic — you're programming a process that
       <em>learns</em> the logic from data.</p>
+    <p>Industry framing: an ML system has three ingredients — <strong>data</strong> (examples),
+      a <strong>model</strong> (a flexible function with knobs called parameters), and a
+      <strong>learning algorithm</strong> (how those knobs get tuned). Change the data and the
+      “program” changes. That is the whole job.</p>
     <div class="callout">An LLM is the extreme version of this: nobody wrote rules for grammar
-      or facts. It learned the patterns from billions of text examples.</div>
+      or facts. It learned patterns from billions of text examples. Same mental flip —
+      just more data, more parameters, more compute.</div>
+    <h3>When <em>not</em> to use ML</h3>
+    <p>If a clear rule already works, write the rule. ML earns its keep when patterns are
+      fuzzy, high-dimensional, or change faster than humans can hand-tune — spam, ranking,
+      fraud, speech, vision, language. Interviews love this honesty: strong engineers know
+      when ML is the wrong hammer.</p>
 
-    <h2 id="three-ways">The three ways machines learn</h2>
-    <p><strong>Supervised learning</strong> — the data comes with the right answers (labels).
-      "Here are emails marked spam / not-spam, learn to predict." This is most practical ML.
-      <em>The fine-tuning stage of an LLM is supervised.</em></p>
-    <p><strong>Unsupervised learning</strong> — no labels; find the structure yourself.
-      Grouping customers into types nobody defined in advance.
-      <em>LLM pretraining is self-supervised — predict the next word, where the "label" is
-      simply the next word in the text.</em></p>
-    <p><strong>Reinforcement learning</strong> — learn by trial and reward.
-      <em>The "RL" in RLHF, where a model is rewarded for responses humans prefer.</em></p>
+    <h2 id="three-ways">How machines learn (the map interviewers use)</h2>
+    <p><strong>Supervised learning</strong> — every example comes with the right answer (a label).
+      “Here are emails marked spam / not-spam; learn to predict.” Most production ML starts here.
+      Regression predicts a <em>number</em> (fare, price). Classification predicts a
+      <em>category</em> (spam / not spam). <em>LLM supervised fine-tuning (SFT) is supervised
+      learning on instruction → response pairs.</em></p>
+    <p><strong>Unsupervised learning</strong> — no labels; find structure yourself. Clustering
+      customers, compressing data, spotting anomalies. Useful for exploration and features —
+      rarely the whole product by itself.</p>
+    <p><strong>Self-supervised learning</strong> — the industry’s favourite trick: hide part of
+      the input and predict it from the rest. The “label” is free because it was already in the
+      data. <em>LLM pretraining (predict the next token) is self-supervised.</em> Say this in
+      interviews; it shows you know how modern AI is actually trained.</p>
+    <p><strong>Reinforcement learning</strong> — learn by trial and reward, not a fixed labelled
+      dataset. An agent acts, gets a score, updates. <em>The “RL” in RLHF rewards answers humans
+      prefer.</em> Harder to get right; powerful when the goal is a behaviour, not a single label.</p>
+    <div class="callout">Cheat-sheet: <b>supervised</b> = labelled answers,
+      <b>self-supervised</b> = labels from the data itself, <b>RL</b> = reward signal.
+      GenAI systems often use all three across pretrain → SFT → preference tuning.</div>
 
-    <h2 id="train-test">The one idea everything hinges on</h2>
-    <p>Every ML project follows the same path: <strong>data → split → train → evaluate →
-      predict.</strong> The load-bearing step is the <strong>train/test split</strong>. You
-      never judge a model on data it learned from — that's like grading students on the exact
-      questions they studied. You hold out a chunk of data, train on the rest, then test on the
-      held-out part to see if it truly <em>generalises</em>.</p>
-    <div class="callout">This is why "data contamination" is a scandal in LLM benchmarks — if
-      test questions leaked into training data, the scores mean nothing. Same principle,
+    <h2 id="pipeline">The production mental model: data → model → eval → ship</h2>
+    <p>Every serious ML project — from a taxi-fare model to GPT fine-tuning — follows the same
+      skeleton:</p>
+    <pre class="result">1. Problem &amp; metric     what does “good” mean in business terms?
+2. Data                   collect, clean, label, check leakage
+3. Split                  train / validation / test (or time-based)
+4. Baseline               always ship a simple model first
+5. Train &amp; tune           fit on train; choose knobs on validation
+6. Evaluate               report test metrics once; don’t peek repeatedly
+7. Ship &amp; monitor         latency, drift, failures, cost</pre>
+    <p>Juniors jump to step 5. Seniors obsess over steps 1–3 and 7. If the metric is wrong or
+      the split leaks the future, the fanciest model is theatre.</p>
+
+    <h2 id="train-test">Train / validation / test (and why splits lie)</h2>
+    <p>The load-bearing idea: <strong>never judge a model on data it learned from.</strong>
+      That’s grading students on the exact questions they studied.</p>
+    <p><strong>Training set</strong> — the model studies this; parameters get updated here.</p>
+    <p><strong>Validation set</strong> — your scratchpad for decisions: which model, which
+      hyperparameters, when to stop training. You <em>are</em> allowed to look, repeatedly.
+      That’s why validation scores slowly become optimistic.</p>
+    <p><strong>Test set</strong> — locked box. Open it once (or rarely) for the number you
+      report. Touching it while tuning is cheating; interviewers will ask.</p>
+    <h3>Cross-validation</h3>
+    <p>When data is scarce, <strong>k-fold cross-validation</strong> rotates which slice is
+      held out, averages the scores, and gives a stabler estimate than one lucky split. Costly
+      on huge datasets or deep nets; still standard for classic ML on medium tabular data.</p>
+    <h3>Split gotchas industry hits constantly</h3>
+    <ul class="plan-list">
+      <li><strong>Random split</strong> — fine when examples are independent.</li>
+      <li><strong>Time-based split</strong> — required for fraud, demand, news: train on the
+        past, test on the future. A random split leaks tomorrow into today.</li>
+      <li><strong>Grouped split</strong> — same user / patient / document must not appear in
+        both train and test, or you measure memorisation of identities.</li>
+      <li><strong>Stratified split</strong> — keep class proportions similar across splits
+        (important when one class is rare).</li>
+    </ul>
+    <div class="callout">LLM parallel: “data contamination” in benchmarks is the same sin —
+      if test questions leaked into training data, the scores mean nothing. Same principle,
       billion-dollar stakes.</div>
 
-    <h2 id="overfitting">Overfitting: the central trap</h2>
-    <p>The best way to feel this is to run it, so I built a tiny experiment on real NYC taxi
-      trips: predict a ride's <strong>fare</strong> from its <strong>distance</strong> and
-      <strong>passenger count</strong>, using decision trees that get steadily more complex
-      (controlled by their <code>max_depth</code>).</p>
-    <p>Because we're predicting a number, we score it with <strong>R²</strong> — read it as "how
-      much of the variation in fare the model explains," where 1.0 is perfect and 0.0 is no
-      better than always guessing the average fare. We check it twice: on <strong>training</strong>
-      rides the model studied, and on <strong>test</strong> rides it has never seen.</p>
+    <h2 id="metrics">Metrics: pick the score that matches the business</h2>
+    <p>Accuracy is the default people reach for — and often the wrong one.</p>
+    <h3>Classification</h3>
+    <ul class="plan-list">
+      <li><strong>Accuracy</strong> — fraction correct. Misleading under class imbalance
+        (99% “not fraud” looks great and catches zero fraud).</li>
+      <li><strong>Precision</strong> — of the alarms you raised, how many were real?
+        High when false alarms are expensive.</li>
+      <li><strong>Recall (sensitivity)</strong> — of the real cases, how many did you catch?
+        High when missing one is expensive (cancer, fraud).</li>
+      <li><strong>F1</strong> — harmonic mean of precision and recall; one number when both matter.</li>
+      <li><strong>ROC-AUC / PR-AUC</strong> — quality across thresholds. Prefer PR-AUC when
+        positives are rare.</li>
+    </ul>
+    <h3>Regression</h3>
+    <ul class="plan-list">
+      <li><strong>MAE</strong> — average absolute error; easy to explain in dollars/minutes.</li>
+      <li><strong>RMSE</strong> — penalises big mistakes harder; sensitive to outliers.</li>
+      <li><strong>R²</strong> — “how much variance did I explain?” 1.0 = perfect, 0.0 = no
+        better than predicting the mean. Can go negative for awful models.</li>
+    </ul>
+    <p>Interview move: <em>state the metric, then state the cost of each error type.</em>
+      That is what separates a tutorial answer from a production answer.</p>
 
-    <p>Here's what I got running it on the real data:</p>
+    <h2 id="overfitting">Overfitting: the central trap</h2>
+    <p>A model can get <strong>better and better on training data while getting worse on new
+      data</strong>. That gap is overfitting — memorising noise instead of learning the pattern.</p>
+    <p><strong>Underfitting</strong> is the opposite: too simple to capture the real pattern
+      (high bias). <strong>Overfitting</strong> is too flexible (high variance). The craft is
+      finding the sweet spot.</p>
+    <h3>Live experiment — NYC taxi fares</h3>
+    <p>Predict a ride’s <strong>fare</strong> from <strong>distance</strong> and
+      <strong>passenger count</strong>, using decision trees that get steadily more complex
+      (<code>max_depth</code>). Score with <strong>R²</strong> on train and on held-out test rides.</p>
     <pre class="result">depth | train R² | test R²
   1   |  0.586   |  0.601   underfit — too simple
   2   |  0.759   |  0.787
@@ -81,49 +164,56 @@
   8   |  0.913   |  0.826   overfitting begins
  12   |  0.928   |  0.773
  none |  0.932   |  0.769   train high, test sagging</pre>
-    <p>Don't take my word for it — run it yourself and you'll get the same numbers (the random
-      seed is fixed):</p>
 
     <a class="run-btn" href="https://colab.research.google.com/github/viswanathjosyula/ai-from-scratch/blob/main/overfitting.ipynb" target="_blank" rel="noopener">
       <span class="play">▶</span> Run this yourself in Colab
     </a>
-    <p class="run-note">No setup — it opens in your browser, press play on each cell.</p>
+    <p class="run-note">No setup — opens in your browser. Fixed seed → same numbers.</p>
 
     <pre><code>import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 
-# Real NYC taxi trips — a ~6,400-ride sample built into seaborn
 df = sns.load_dataset("taxis").dropna(subset=["distance", "passengers", "fare"])
-
-X = df[["distance", "passengers"]]   # the trip
-y = df["fare"]                       # what we predict (a number)
-
+X = df[["distance", "passengers"]]
+y = df["fare"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 for depth in [1, 2, 3, 5, 8, 12, None]:
     m = DecisionTreeRegressor(max_depth=depth, random_state=42).fit(X_train, y_train)
     print(depth, m.score(X_train, y_train), m.score(X_test, y_test))</code></pre>
 
-    <p>Run it and watch the two scores pull apart — that gap <em>is</em> overfitting:</p>
-    <p><strong>Shallow tree</strong> (depth 1–2): too simple. It hasn't carved out enough detail
-      to capture the pattern yet — this is <em>underfitting</em>.</p>
-    <p><strong>Middle depth</strong> (around 5): the test score <em>peaks</em> at 0.875. The model
-      has learned the real "longer ride → higher fare" pattern. This is the sweet spot.</p>
-    <p><strong>Deep tree</strong> (depth 8 and beyond): training R² keeps climbing toward 0.93,
-      but test R² <em>drops</em> — all the way down to 0.77. The tree has started memorising
-      individual rides, including their random noise, instead of the general pattern. It does
-      better and better on the trips it studied and worse on new ones.</p>
-    <div class="callout">The best model isn't the most complex one — it's the one at the
-      <b>peak of the test score</b>. Past that point, extra complexity makes a model look smarter
-      on paper and perform worse in reality.</div>
-    <p>That train-vs-test gap is what experienced practitioners watch obsessively. In one
-      sentence: <strong>too simple is high bias, too complex is high variance, and the job is
-      balancing the two.</strong></p>
-    <p class="run-note">Want to see it get dramatic? In the notebook, change <code>y = df["fare"]</code>
-      to <code>y = df["tip"]</code>. Tips depend on unpredictable human generosity, so a deep
-      tree's test score can go <em>negative</em> — a model literally worse than guessing the
-      average.</p>
+    <p><strong>Shallow (depth 1–2):</strong> underfit — pattern not captured yet.<br>
+      <strong>Middle (~5):</strong> test peaks — general pattern learned.<br>
+      <strong>Deep (8+):</strong> train keeps rising, test falls — memorising individual rides.</p>
+    <div class="callout">The best model isn’t the most complex one — it’s the one at the
+      <b>peak of the test (or validation) score</b>. Past that point, complexity is vanity.</div>
+    <h3>How industry fights overfitting</h3>
+    <ul class="plan-list">
+      <li>More data / cleaner labels</li>
+      <li>Simpler models or early stopping</li>
+      <li>Regularisation (L1/L2, dropout in neural nets)</li>
+      <li>Cross-validation for honest model selection</li>
+      <li>Feature selection — drop noisy inputs</li>
+    </ul>
+    <p class="run-note">Want drama? In the notebook change <code>y = df["fare"]</code> to
+      <code>y = df["tip"]</code>. Tips are noisy human generosity — deep trees can go
+      <em>negative</em> R² on test (worse than guessing the average).</p>
+    <p>One sentence to memorise: <strong>too simple is high bias, too complex is high variance,
+      and the job is balancing the two.</strong></p>
+
+    <h2 id="leakage">Data leakage: the silent interview killer</h2>
+    <p><strong>Leakage</strong> means information that would not be available at prediction
+      time somehow helped training — so your metrics look heroic and production falls over.</p>
+    <ul class="plan-list">
+      <li>Scaling or imputing using the <em>full</em> dataset before splitting</li>
+      <li>Including a feature that is a proxy for the label (e.g. “days_in_hospital” to predict
+        readmission when that field is filled after the fact)</li>
+      <li>Random splits on time-series problems</li>
+      <li>Duplicate near-identical rows across train and test</li>
+    </ul>
+    <p>Defence: split first, fit preprocessing on train only, transform val/test with those
+      same statistics. Draw the timeline of what is known when a prediction is made.</p>
 
     <h2 id="interview">Interview questions</h2>
     <p class="topic-note">Also in the full <a href="interview.html#foundations">interview bank</a>.</p>
@@ -134,21 +224,33 @@ for depth in [1, 2, 3, 5, 8, 12, None]:
         the data labels itself using the next token as the target.</p>
     </div>
     <div class="qa">
-      <p class="q">Your model gets 99% on training but 80% on test. What's happening?</p>
+      <p class="q">Your model gets 99% on training but 80% on test. What’s happening?</p>
       <p class="a">Overfitting — it memorised noise. Fixes: simplify the model, add
-        regularisation, get more data, or use cross-validation. Naming several fixes is what
-        separates a strong answer.</p>
+        regularisation, get more data, early stopping, or use cross-validation. Naming several
+        fixes is what separates a strong answer.</p>
     </div>
     <div class="qa">
       <p class="q">Why do we need a test set at all?</p>
       <p class="a">To estimate performance on data the model has never seen — the only thing
-        that matters in production. Scoring on training data is dishonestly optimistic.</p>
+        that matters in production. Scoring on training data is dishonestly optimistic.
+        Validation is for tuning; test is for the final report.</p>
     </div>
     <div class="qa">
-      <p class="q">What's the bias-variance tradeoff?</p>
+      <p class="q">What’s the bias-variance tradeoff?</p>
       <p class="a">High bias = too simple, underfits. High variance = too complex, overfits.
         Total error ≈ bias² + variance + irreducible noise; you tune complexity to minimise
         the sum.</p>
+    </div>
+    <div class="qa">
+      <p class="q">When is accuracy a bad metric?</p>
+      <p class="a">Class imbalance. Prefer precision/recall/F1 or PR-AUC, and tie the metric to
+        the cost of false positives vs false negatives.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Give an example of data leakage.</p>
+      <p class="a">Fitting a scaler on train+test before splitting, or using a feature only known
+        after the event you’re predicting. Fix: split first; fit transforms on train only;
+        respect time.</p>
     </div>
   </article>
 
@@ -160,7 +262,8 @@ for depth in [1, 2, 3, 5, 8, 12, None]:
   <footer>
     <p class="foot-mono">AI FROM SCRATCH — MODULE 01</p>
     <p>Spotted a mistake? Tell me — corrections are the point.
-      <a href="index.html">Back to all modules</a></p>
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase0">Roadmap Phase 0</a></p>
   </footer>
 
 </div>
