@@ -36,6 +36,7 @@
       Depth beats two half-finished demos every time.</div>
 
     <ul class="toc">
+      <li><a href="#start">Start here — FraudWatch Week 1</a></li>
       <li><a href="#pick">Which domain should you pick?</a></li>
       <li><a href="#finance">Finance flagships</a></li>
       <li><a href="#energy">Energy flagships</a></li>
@@ -43,6 +44,23 @@
       <li><a href="#tracker">Status tracker</a></li>
       <li><a href="#stack">Stack &amp; data sources</a></li>
     </ul>
+
+    <h2 id="start">Start here — FraudWatch Week 1</h2>
+    <p>Locked primary: <strong>FraudWatch</strong> (then FilingPilot later). Follow these steps
+      in order. Code lives in the repo folder <code>fraudwatch/</code>.</p>
+    <pre class="result">Step 0  Setup venv + pip install -r fraudwatch/requirements.txt
+Step 1  Write the problem in 5 lines (who, costs, why accuracy fails)
+Step 2  Run:  cd fraudwatch &amp;&amp; python 01_baseline.py
+Step 3  Read PR-AUC table + artifacts/pr_curve_week1.png
+Step 4  Build-log note: which model wins and why
+Step 5  Drill: precision vs recall for fraud queues</pre>
+    <p>Full walkthrough: <a href="fraudwatch/README.md">fraudwatch/README.md</a>.
+      First script: <a href="fraudwatch/01_baseline.py">01_baseline.py</a>.</p>
+    <div class="callout">Week-1 teaching moment: logistic gets high recall but terrible precision
+      at 0.5; random forest wins on <b>PR-AUC (~0.81 vs ~0.72)</b>. Accuracy looks “amazing”
+      for both because fraud is ~0.17% of rows — that is the trap.</div>
+    <p>When Step 2 works on your machine, tell me — we’ll add <code>02_thresholds.py</code>
+      (operating-point / cost matrix) next.</p>
 
     <h2 id="pick">Which domain should you pick?</h2>
     <pre class="result">Want GenAI / LLM interviews?     → Finance docs RAG (+ fraud/credit baseline)
@@ -153,7 +171,7 @@ Unsure?                          → Start with FraudWatch (fast feedback), add 
     <div class="concept-list">
       <div class="concept">
         <span class="concept-name"><strong>FraudWatch</strong> — fraud detection (Finance, classic ML)</span>
-        <span class="concept-links"><span class="tag live">Proposed #1</span><a href="#fraudwatch">Details</a></span>
+        <span class="concept-links"><span class="tag live">Building</span><a href="#start">Start</a></span>
       </div>
       <div class="concept">
         <span class="concept-name"><strong>FilingPilot</strong> — filings / research RAG (Finance, GenAI)</span>
@@ -168,8 +186,8 @@ Unsure?                          → Start with FraudWatch (fast feedback), add 
         <span class="concept-links"><span class="tag soon">Alt</span><a href="#gridpulse">Details</a></span>
       </div>
     </div>
-    <div class="callout">Tell me your pick (e.g. “FraudWatch + FilingPilot” or “LoadCast first”)
-      and we’ll scaffold the repo, first notebook, and a build-log section on this page.</div>
+    <div class="callout">FraudWatch Week 1 is scaffolded. Finish
+      <a href="#start">Start here</a>, then we add thresholds + cost matrix.</div>
 
     <h2 id="stack">Stack &amp; data sources</h2>
     <pre class="result">Classic ML    scikit-learn, LightGBM/XGBoost, pandas
