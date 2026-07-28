@@ -320,6 +320,8 @@ a:focus-visible, .cta:focus-visible {
 
 @media (max-width: 540px) {
   body { font-size: 18px; }
+  .topbar { flex-wrap: wrap; gap: 10px; }
+  .topbar nav { display: flex; flex-wrap: wrap; gap: 4px 0; }
   .topbar nav a { margin-left: 12px; font-size: 11px; }
   .topbar nav a:first-child { margin-left: 0; }
   .hero { padding: 44px 0 30px; }
