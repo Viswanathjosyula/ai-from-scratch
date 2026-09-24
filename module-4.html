@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 4 — Transformers &amp; LLMs | AI from scratch</title>
+<meta name="description" content="Tokenization, self-attention, transformers, and how models like ChatGPT are pretrained and fine-tuned — in plain English.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="projects.html">Projects</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 04 · Transformers &amp; LLMs</p>
+    <h1>Attention is how language models look around</h1>
+    <p class="stand">Tokens, embeddings, self-attention, the transformer stack, and the training
+      path from next-token prediction to a helpful assistant — without the jargon wall.</p>
+  </div>
+
+  <article>
+    <ul class="toc">
+      <li><a href="#bridge">From deep nets to language models</a></li>
+      <li><a href="#tokens">Tokens &amp; embeddings</a></li>
+      <li><a href="#attention">Self-attention (Q, K, V)</a></li>
+      <li><a href="#transformer">The transformer block</a></li>
+      <li><a href="#training">How an LLM is trained</a></li>
+      <li><a href="#sampling">Decoding: temperature, top-p, context</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="bridge">From deep nets to language models</h2>
+    <p>Module 3 ended here: a neural net is weights + activations + loss + backprop.
+      An <strong>LLM</strong> is that same loop on text, with a special layer called
+      <strong>attention</strong> so every token can look at every other token.</p>
+    <p>The training objective sounds almost silly: <strong>predict the next token</strong>.
+      Do that well enough, at scale, and grammar, facts, and reasoning-ish behaviour emerge
+      as side effects — not because anyone wrote rules for them.</p>
+    <div class="callout">Interview one-liner: <b>“A GPT-style model is a deep transformer
+      trained with cross-entropy to predict the next token; fine-tuning and preference
+      tuning reshape its behaviour on top.”</b></div>
+
+    <h2 id="tokens">Tokens &amp; embeddings</h2>
+    <p>Models don’t read characters or words directly. A <strong>tokenizer</strong> chops text
+      into <strong>tokens</strong> — often subwords (BPE / SentencePiece). Common words may be
+      one token; rare words split into pieces.</p>
+    <ul class="plan-list">
+      <li><strong>Vocab size</strong> — tens of thousands of token IDs. Bigger vocab → fewer
+        tokens per word, but a fatter softmax.</li>
+      <li><strong>Context window</strong> — max tokens the model can see at once. Longer =
+        more room for docs/prompts, more compute/cost.</li>
+      <li><strong>Embedding</strong> — each token ID maps to a learned vector. Meaning lives
+        in geometry: similar contexts → nearby vectors.</li>
+    </ul>
+    <p>Why this matters in production: cost and latency scale with <em>tokens</em>, not
+      characters. Numbers, code, and non-English text often tokenize awkwardly — budget for it.</p>
+
+    <h2 id="attention">Self-attention (Q, K, V)</h2>
+    <p>For each token, the model builds three vectors:</p>
+    <pre class="result">Q  query   — “what am I looking for?”
+K  key     — “what do I contain?”
+V  value   — “what should I pass along if selected?”</pre>
+    <p>The query of token A is dotted with keys of other tokens → scores → softmax → mix of
+      values. High score = “pay attention here.” That’s it: soft, learned lookup across the
+      sequence.</p>
+    <p><strong>Multi-head attention</strong> runs several of these lookups in parallel so
+      different heads can specialise (syntax, coreference, punctuation…).</p>
+    <p><strong>Causal (masked) attention</strong> in GPT-style models: a token may only look
+      at itself and the past — never the future — so next-token training isn’t cheating.</p>
+    <div class="callout">Tiny mental demo: in “The keys to the <b>cabinet</b> … <b>it</b>
+      was locked,” attention helps “it” land on “cabinet.” RNNs struggled to carry that
+      signal across long distances; attention jumps there in one step.</div>
+
+    <h2 id="transformer">The transformer block</h2>
+    <pre class="result">input tokens
+  → embeddings (+ positional info)
+  → N × [ multi-head attention → feed-forward MLP ]
+       (with residual connections + layer norm)
+  → linear + softmax over vocab
+  → next-token probabilities</pre>
+    <p><strong>Positional encoding / RoPE</strong> — without it, attention is a bag of tokens;
+      order would be invisible. Modern LLMs bake position into the attention math.</p>
+    <p><strong>Encoder vs decoder:</strong></p>
+    <ul class="plan-list">
+      <li><strong>Encoder</strong> (BERT-style) — bidirectional; great for understanding /
+        classification.</li>
+      <li><strong>Decoder</strong> (GPT-style) — causal; generates left-to-right.</li>
+      <li><strong>Encoder–decoder</strong> (T5-style) — classic sequence-to-sequence.</li>
+    </ul>
+    <p>ChatGPT-class models are mostly <strong>decoder-only</strong> transformers scaled up.</p>
+
+    <h2 id="training">How an LLM is trained</h2>
+    <h3>1. Pretraining</h3>
+    <p>Massive text corpora. Loss = cross-entropy on next token. This builds general language
+      competence. Expensive; done by labs, not by most product teams.</p>
+    <h3>2. Supervised fine-tuning (SFT)</h3>
+    <p>Show high-quality (instruction, response) pairs. Same next-token loss, sharper data.
+      Turns a base model into something that <em>follows instructions</em>.</p>
+    <h3>3. Preference tuning (RLHF / DPO)</h3>
+    <p>Humans (or proxies) rank answers; the model is nudged toward preferred ones.
+      <strong>RLHF</strong> uses a reward model + RL. <strong>DPO</strong> skips explicit RL
+      with a clever preference loss. Goal: helpful, harmless, honest behaviour — imperfectly.</p>
+    <div class="callout">Product decision framework: <b>prompt / tools / RAG first</b> for
+      changing facts; <b>fine-tune</b> for style, format, or reliable tool-calling patterns.
+      Many systems combine all three.</div>
+
+    <h2 id="sampling">Decoding: temperature, top-p, context</h2>
+    <ul class="plan-list">
+      <li><strong>Greedy / low temperature</strong> — peaked distribution; more deterministic;
+        better for facts and code.</li>
+      <li><strong>Higher temperature / top-p</strong> — more diverse; riskier for accuracy.</li>
+      <li><strong>Context packing</strong> — system prompt + history + retrieved docs + user
+        message must fit the window. Overflow → truncation bugs.</li>
+    </ul>
+    <p>Always version prompts the way you’d version code. A one-line prompt change can move
+      product metrics more than a model swap.</p>
+
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the <a href="interview.html#llms">interview bank</a>.</p>
+    <div class="qa">
+      <p class="q">Explain self-attention in plain English.</p>
+      <p class="a">Each token builds a query, key, and value. Queries score against keys to
+        decide how much to read from each value — a soft, learned lookup across the sequence.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is a token, and why does tokenization matter?</p>
+      <p class="a">A subword unit the model consumes. It drives cost (context length), multilingual
+        behaviour, and weird edge cases with numbers and code.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Pretraining vs SFT vs RLHF?</p>
+      <p class="a">Pretrain = next-token on huge corpora. SFT = imitate instruction/response pairs.
+        RLHF/DPO = prefer answers humans like. Different data, different failure modes.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why causal masking in GPT models?</p>
+      <p class="a">So a token never sees the future during training — otherwise next-token
+        prediction would cheat and wouldn’t match generation time.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What do temperature and top-p control?</p>
+      <p class="a">They reshape the next-token distribution. Higher → more diverse/less reliable.
+        Keep low for factual tasks; raise carefully for brainstorming.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-3.html">← Module 3: Deep Learning</a>
+    <a href="module-5.html">Next: Generative AI →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 04</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase2">Roadmap Phase 2</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

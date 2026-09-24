@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 8 — System Design &amp; Interviews | AI from scratch</title>
+<meta name="description" content="GenAI and ML system design frameworks, practice prompts, and interview strategy — putting the whole curriculum together.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="projects.html">Projects</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 08 · System Design &amp; Interviews</p>
+    <h1>Design the system — then defend it</h1>
+    <p class="stand">A repeatable framework for ML / GenAI design rounds, worked examples, and
+      how to use this curriculum in interviews without sounding like a textbook.</p>
+  </div>
+
+  <article>
+    <ul class="toc">
+      <li><a href="#framework">The 6-box design framework</a></li>
+      <li><a href="#rag-bot">Example: RAG customer-support bot</a></li>
+      <li><a href="#fraud">Example: fraud scoring service</a></li>
+      <li><a href="#decide">Prompt vs RAG vs fine-tune</a></li>
+      <li><a href="#practice">Practice prompts</a></li>
+      <li><a href="#strategy">Interview strategy</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="framework">The 6-box design framework</h2>
+    <p>Use this every time. Aim for a structured 20–30 minute whiteboard:</p>
+    <pre class="result">1. Requirements   users, SLA, latency, cost, languages, compliance
+2. Data           sources, labels, privacy, freshness, access control
+3. Model/prompt   baseline → candidates → why this choice
+4. Eval           offline metrics, golden sets, human review
+5. Serve          batch vs online, API shape, rollouts
+6. Monitor        drift, quality, feedback, retrain / reindex triggers</pre>
+    <p>State assumptions out loud. Ask clarifying questions before diving into architecture —
+      seniors listen for that.</p>
+
+    <h2 id="rag-bot">Example: RAG customer-support bot</h2>
+    <ul class="plan-list">
+      <li><strong>Requirements</strong> — deflect tier-1 tickets; escalate when unsure; cite docs;
+        p95 latency budget; PII-safe logs.</li>
+      <li><strong>Data</strong> — help center + internal runbooks; chunk by heading; ACL filters.</li>
+      <li><strong>Model</strong> — managed LLM + embeddings; hybrid retrieval; prompt forces
+        citations and abstention.</li>
+      <li><strong>Eval</strong> — 50 real tickets with gold answers; retrieval hit@k; faithfulness;
+        escalation precision.</li>
+      <li><strong>Serve</strong> — API behind the help desk; canary prompt versions.</li>
+      <li><strong>Monitor</strong> — thumbs, escalation rate, empty-retrieval rate, cost/ticket,
+        index age.</li>
+    </ul>
+
+    <h2 id="fraud">Example: fraud scoring service</h2>
+    <ul class="plan-list">
+      <li><strong>Requirements</strong> — score each payment in &lt;X ms; review queue capacity;
+        cost matrix for FP/FN.</li>
+      <li><strong>Data</strong> — transactions + delayed fraud labels; stratified/time splits;
+        no post-outcome features.</li>
+      <li><strong>Model</strong> — logistic baseline → gradient boosting; calibrate probabilities;
+        threshold for precision at target recall.</li>
+      <li><strong>Eval</strong> — PR-AUC, precision@k, cost-weighted utility; slice by merchant/geo.</li>
+      <li><strong>Serve</strong> — online API; feature parity with training; model version header.</li>
+      <li><strong>Monitor</strong> — score distribution shifts, null spikes, queue size, late labels.</li>
+    </ul>
+    <p>This is the system design behind <a href="projects.html#fraudwatch">FraudWatch</a>.</p>
+
+    <h2 id="decide">Prompt vs RAG vs fine-tune</h2>
+    <pre class="result">Need fresh / private / citable facts?     → RAG (+ tools)
+Need style / format / tool-calling habit? → fine-tune (or strong few-shot)
+Need a quick behaviour tweak?             → prompt change + eval
+Unsure?                                   → prompt + RAG first; fine-tune when metrics plateau</pre>
+    <p>Strong answers compare options explicitly — cost, latency, data needs, ownership —
+      instead of picking one blindly.</p>
+
+    <h2 id="practice">Practice prompts</h2>
+    <p>Sketch each with the 6-box framework (also in the
+      <a href="interview.html#system-design">interview bank</a>):</p>
+    <ul class="plan-list">
+      <li>Semantic search over internal documents (with ACLs)</li>
+      <li>Content moderation pipeline</li>
+      <li>Document Q&amp;A over private PDFs</li>
+      <li>Recommendation feed (candidate generation → rank → re-rank)</li>
+      <li>FilingPilot: Q&amp;A over SEC filings with numeric faithfulness checks</li>
+      <li>LoadCast: demand forecasting with drift monitors</li>
+    </ul>
+
+    <h2 id="strategy">Interview strategy</h2>
+    <ul class="plan-list">
+      <li><strong>Lead with a story</strong> — FraudWatch / FilingPilot beats generic tutorials.</li>
+      <li><strong>Name tradeoffs</strong> — precision vs recall, RAG vs fine-tune, latency vs depth.</li>
+      <li><strong>Admit uncertainty</strong> — then say how you’d measure the way forward.</li>
+      <li><strong>Draw the diagram</strong> — data → model → eval → serve → monitor.</li>
+      <li><strong>Drill weekly</strong> — five questions from the
+        <a href="interview.html">bank</a>, out loud, timed.</li>
+    </ul>
+    <div class="callout">You now have the full arc: foundations → algorithms → deep learning →
+      transformers → GenAI → data → MLOps → design. The remaining work is reps: projects,
+      evals, and whiteboard practice.</div>
+
+    <h2 id="interview">Interview questions</h2>
+    <div class="qa">
+      <p class="q">Design a RAG customer-support bot for a SaaS product.</p>
+      <p class="a">Clarify SLA/languages/escalation. Ingest→chunk→embed→retrieve→generate with
+        citations; eval on real tickets; guardrails for PII; monitor deflection, CSAT,
+        hallucinations; version prompts and indexes.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Fine-tune, prompt, or RAG for a domain copilot?</p>
+      <p class="a">Default prompt + tools + RAG for facts. Fine-tune for stable style/tool use.
+        Compare data availability, change frequency, privacy, and cost explicitly.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Design semantic search over internal documents.</p>
+      <p class="a">ACLs first. Hybrid search, sensible chunking, re-ranker, freshness pipeline,
+        relevance eval (nDCG / labels), latency and permission checks at query time.</p>
+    </div>
+    <div class="qa">
+      <p class="q">How would you present FraudWatch in a design interview?</p>
+      <p class="a">Walk the 6 boxes: imbalance &amp; cost matrix, stratified/time splits, PR-AUC
+        + threshold, API with versioned artifacts, monitoring score drift and queue load.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-7.html">← Module 7: MLOps</a>
+    <a href="projects.html">Build projects →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 08</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase4">Roadmap Phase 4</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

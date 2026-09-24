@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 6 — Data &amp; Feature Engineering | AI from scratch</title>
+<meta name="description" content="Data pipelines, leakage, splits, features, imbalance, and label quality — the craft that decides whether models work in production.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="projects.html">Projects</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 06 · Data &amp; Feature Engineering</p>
+    <h1>Messy data beats clever models</h1>
+    <p class="stand">Pipelines, leakage-safe splits, features, imbalance, and labels —
+      the unsexy work that decides whether your model survives contact with reality.</p>
+  </div>
+
+  <article>
+    <ul class="toc">
+      <li><a href="#pipeline">The data pipeline</a></li>
+      <li><a href="#leakage">Leakage &amp; honest splits</a></li>
+      <li><a href="#features">Feature engineering that matters</a></li>
+      <li><a href="#imbalance">Imbalance &amp; rare events</a></li>
+      <li><a href="#labels">Labels are a product</a></li>
+      <li><a href="#genai-data">Data for GenAI / RAG</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="pipeline">The data pipeline</h2>
+    <pre class="result">sources → extract → validate → transform/features
+       → split → train/eval → store artifacts → monitor inputs in prod</pre>
+    <p>Industry habit: <strong>fit transforms on train only</strong>, then apply to val/test/prod
+      with the same statistics. Scalers, imputers, target encoders — all leak if fitted on the
+      full dataset before the split.</p>
+    <p>Validate early: null rates, ranges, sudden schema changes, duplicate keys. A model can’t
+      fix a broken join.</p>
+
+    <h2 id="leakage">Leakage &amp; honest splits</h2>
+    <p><strong>Leakage</strong> = information unavailable at prediction time helped training.
+      Metrics look heroic; production falls over.</p>
+    <ul class="plan-list">
+      <li>Scaling/encoding on train+test together</li>
+      <li>Post-outcome features (filled after the event you’re predicting)</li>
+      <li>Random splits on time-series / drifting worlds</li>
+      <li>Same user/patient/device in train and test (entity leakage)</li>
+    </ul>
+    <p><strong>Split recipes:</strong> random (i.i.d.), <strong>time-based</strong> (train past /
+      test future), <strong>grouped</strong> (keep entities together), <strong>stratified</strong>
+      (preserve class rates — critical for fraud).</p>
+    <div class="callout">FraudWatch reminder: drop or handle <code>Time</code> carefully, stratify
+      rare fraud labels, and never tune on the final test set. See
+      <a href="projects.html#start">projects start guide</a>.</div>
+
+    <h2 id="features">Feature engineering that matters</h2>
+    <ul class="plan-list">
+      <li><strong>Numeric</strong> — scaling, log transforms for heavy tails, winsorising outliers</li>
+      <li><strong>Categorical</strong> — one-hot (low cardinality), target/ordinal encodings (careful
+        with leakage), embeddings for high cardinality</li>
+      <li><strong>Time</strong> — lags, rolling stats, calendar features; always aligned to what
+        was known at decision time</li>
+      <li><strong>Text</strong> — classic TF-IDF baselines still strong; embeddings for semantic tasks</li>
+    </ul>
+    <p>Tree models often need less scaling; linear models and neural nets care more. Always ask:
+      <em>would this feature exist in the live request path?</em></p>
+    <h3>Feature importance &amp; explainability</h3>
+    <p>Tree gain/permutation importance and SHAP-style attributions help debug and satisfy
+      “why?” questions in regulated domains. Keep a glass-box baseline even if a black box
+      scores slightly higher.</p>
+
+    <h2 id="imbalance">Imbalance &amp; rare events</h2>
+    <p>Fraud, defaults, failures — rare positives. Recipe:</p>
+    <ol class="plan-list">
+      <li>Pick the right metric (PR-AUC, precision@k, recall at fixed precision)</li>
+      <li>Class weights / calibrated probabilities</li>
+      <li>Threshold for the business cost matrix</li>
+      <li>Only then consider resampling tricks</li>
+    </ol>
+    <p>Don’t jump to SMOTE before a weighted baseline and a clear cost story — interviewers
+      notice.</p>
+
+    <h2 id="labels">Labels are a product</h2>
+    <p>Garbage labels → garbage models. Budget for:</p>
+    <ul class="plan-list">
+      <li>Clear labelling guidelines and examples</li>
+      <li>Inter-annotator agreement checks</li>
+      <li>Handling delayed labels (fraud often confirmed weeks later)</li>
+      <li>Feedback loops that don’t silently bias the next train set</li>
+    </ul>
+    <p>Data-centric AI in one sentence: improving labels and slices often beats another model
+      architecture.</p>
+
+    <h2 id="genai-data">Data for GenAI / RAG</h2>
+    <ul class="plan-list">
+      <li>Chunking strategy (size, overlap, respect headers/tables)</li>
+      <li>Metadata filters (product, date, access control)</li>
+      <li>Eval questions with gold passages</li>
+      <li>PII redaction before indexing</li>
+      <li>Freshness SLA for the index</li>
+    </ul>
+
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the <a href="interview.html#data">interview bank</a>.</p>
+    <div class="qa">
+      <p class="q">What is data leakage? Give an example.</p>
+      <p class="a">Training with information you wouldn’t have at prediction time — e.g. fitting
+        a scaler on train+test, or a post-outcome feature. Split first; fit on train only.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Random split or time-based split?</p>
+      <p class="a">Time-based when the world drifts (fraud, demand, news). Random only when
+        i.i.d. is a fair assumption.</p>
+    </div>
+    <div class="qa">
+      <p class="q">How do you handle class imbalance?</p>
+      <p class="a">Correct metrics first, then class weights / thresholds / more minority data.
+        Resampling is optional, not step one.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What makes a good feature?</p>
+      <p class="a">Available at prediction time, stable, predictive, and explainable enough for
+        the domain — validated without leaking the future.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-5.html">← Module 5: Generative AI</a>
+    <a href="module-7.html">Next: MLOps →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 06</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase3">Roadmap Phase 3</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
