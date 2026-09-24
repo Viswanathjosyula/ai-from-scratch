@@ -8,7 +8,7 @@ curriculum at ai.josyulablog.org, plus a hands-on **FraudWatch** project under `
 ### Services
 - **Static site** — serve from repo root: `python3 -m http.server 8000`
   then open `http://localhost:8000/index.html`.
-  Pages: curriculum modules, `roadmap.html`, `interview.html`, `projects.html`.
+  Pages: curriculum modules (1–8), `roadmap.html`, `interview.html`, `projects.html`.
 - **FraudWatch** — finance fraud-detection lab in `fraudwatch/` (scikit-learn).
   Not a long-running service; run scripts on demand (see `fraudwatch/README.md`).
 - Companion `.ipynb` files are opened via Colab links in the modules; local Jupyter is optional.

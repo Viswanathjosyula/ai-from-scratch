@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 5 — Generative AI | AI from scratch</title>
+<meta name="description" content="Prompting, RAG, hallucinations, eval, and a map of generative models — practical GenAI for interviews and products.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="projects.html">Projects</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 05 · Generative AI</p>
+    <h1>Make models useful — and keep them honest</h1>
+    <p class="stand">Prompting, RAG, tools, hallucinations, and evaluation: the product layer
+      on top of LLMs, plus a quick map of other generative families.</p>
+  </div>
+
+  <article>
+    <ul class="toc">
+      <li><a href="#map">The generative map</a></li>
+      <li><a href="#prompting">Prompting that actually helps</a></li>
+      <li><a href="#rag">RAG: retrieve, then generate</a></li>
+      <li><a href="#tools">Tools &amp; agents (light)</a></li>
+      <li><a href="#hallucinations">Why models hallucinate</a></li>
+      <li><a href="#eval">How to evaluate GenAI features</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="map">The generative map</h2>
+    <p><strong>Generative</strong> models produce new samples — text, images, audio — instead
+      of only labelling inputs.</p>
+    <ul class="plan-list">
+      <li><strong>Autoregressive LMs</strong> — next-token transformers (ChatGPT-class). Your
+        daily GenAI workhorse.</li>
+      <li><strong>Diffusion</strong> — start from noise, iteratively denoising into an image
+        (Stable Diffusion, Imagen). Dominant for modern image gen.</li>
+      <li><strong>GANs</strong> — generator vs discriminator. Historically huge for images;
+        less central now for product LLMs, still appears in interviews.</li>
+      <li><strong>VAEs</strong> — probabilistic latent models; useful intuition, niche products.</li>
+    </ul>
+    <p>For most ML / GenAI engineer interviews in 2026, depth on <strong>LLMs + RAG + eval</strong>
+      beats memorising every generative family.</p>
+
+    <h2 id="prompting">Prompting that actually helps</h2>
+    <ul class="plan-list">
+      <li><strong>Be specific</strong> — role, format, constraints, examples of good output.</li>
+      <li><strong>Few-shot</strong> — show 2–5 examples when the task is picky.</li>
+      <li><strong>Chain-of-thought</strong> — ask for stepwise reasoning on hard problems;
+        verify it doesn’t invent steps for factual lookups.</li>
+      <li><strong>Separate instructions from data</strong> — clear delimiters reduce
+        prompt-injection confusion.</li>
+      <li><strong>Version prompts</strong> — treat them as code; A/B and regress on an eval set.</li>
+    </ul>
+    <div class="callout">Prompting is not magic. If the fact isn’t in the model’s weights or
+      the context you provided, confident prose is still a guess. That’s when you reach for RAG
+      or tools.</div>
+
+    <h2 id="rag">RAG: retrieve, then generate</h2>
+    <p><strong>Retrieval-Augmented Generation</strong> keeps knowledge outside the model:</p>
+    <pre class="result">1. Ingest docs → chunk → embed → vector index (+ keyword/hybrid)
+2. On query → retrieve top-k passages
+3. Stuff passages into the prompt with instructions
+4. Generate an answer that must cite those passages
+5. Evaluate retrieval hit rate + answer faithfulness</pre>
+    <p><strong>When RAG wins:</strong> private docs, frequently changing facts, need for
+      citations, compliance. <strong>When fine-tune wins:</strong> style, format, tool-calling
+      habits — not a weekly FAQ refresh.</p>
+    <h3>RAG failure modes (memorise these)</h3>
+    <ul class="plan-list">
+      <li>Bad chunking (splitting mid-table / mid-clause)</li>
+      <li>Wrong embedding model or missing hybrid search</li>
+      <li>Retrieved junk → fluent wrong answer</li>
+      <li>Stale index after docs change</li>
+      <li>No abstention when evidence is weak</li>
+    </ul>
+    <p>Your <a href="projects.html#filingpilot">FilingPilot</a> project is this pattern on
+      financial documents — highest GenAI portfolio signal.</p>
+
+    <h2 id="tools">Tools &amp; agents (light)</h2>
+    <p>An LLM can call <strong>tools</strong>: search, SQL, calculator, ticket API. Pattern:</p>
+    <pre class="result">model proposes a tool call → your code runs it →
+result returns to the model → final answer</pre>
+    <p>“Agents” chain multiple steps. Start simple: one tool, clear schema, hard timeouts,
+      logged traces. Multi-agent theatre is optional; reliable tool loops are not.</p>
+
+    <h2 id="hallucinations">Why models hallucinate</h2>
+    <p>They sample plausible tokens, not truth. Causes: knowledge gaps, bad retrieval,
+      prompts that force an answer, overconfident decoding.</p>
+    <p><strong>Mitigations:</strong> RAG with citations, allow “I don’t know,” constrained
+      decoding / JSON schemas, grounding checks, human review on high stakes, eval sets for
+      factuality.</p>
+
+    <h2 id="eval">How to evaluate GenAI features</h2>
+    <pre class="result">Offline   fixed question set · exact checks where possible
+          retrieval hit rate · citation accuracy · format validity
+          rubric / human spot checks · LLM-as-judge only with audits
+Online    thumbs, escalation rate, task success, latency, $/request
+Safety    injections, PII leaks, jailbreaks — separate test suites</pre>
+    <p>Never ship on vibes. A 20-question eval set beats a demo every time in interviews.</p>
+
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the <a href="interview.html#llms">interview bank</a>.</p>
+    <div class="qa">
+      <p class="q">RAG vs fine-tuning — when do you pick which?</p>
+      <p class="a">RAG for changing/private/citable knowledge. Fine-tune for style, format,
+        tool-use patterns. Many production systems use both.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why do LLMs hallucinate?</p>
+      <p class="a">They predict plausible tokens, not ground truth. Mitigate with retrieval,
+        abstention, constraints, and factuality evals.</p>
+    </div>
+    <div class="qa">
+      <p class="q">How would you evaluate an LLM feature?</p>
+      <p class="a">Fixed offline eval set + task metrics + human spot checks; track online
+        quality, latency, and cost. Don’t trust a single judge score alone.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Name three RAG failure modes.</p>
+      <p class="a">Bad chunking, poor retrieval, stale indexes — each can produce fluent wrong
+        answers. Strong candidates also mention weak abstention.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is prompt injection?</p>
+      <p class="a">Untrusted content (user or retrieved docs) that tries to override system
+        instructions. Defend with separation of privileges, allowlists for tools, and treating
+        retrieved text as data, not commands.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-4.html">← Module 4: Transformers &amp; LLMs</a>
+    <a href="module-6.html">Next: Data &amp; Features →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 05</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase2">Roadmap Phase 2</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

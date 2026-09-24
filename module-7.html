@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 7 — MLOps &amp; Deployment | AI from scratch</title>
+<meta name="description" content="Serving models, versioning, monitoring, drift, and LLM ops — how to ship AI and know when it’s rotting.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <a class="brand" href="index.html">AI&nbsp;from&nbsp;<b>scratch</b></a>
+    <nav>
+      <a href="index.html#curriculum">Curriculum</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="projects.html">Projects</a>
+      <a href="interview.html">Interviews</a>
+    </nav>
+  </header>
+
+  <div class="mhead">
+    <p class="kicker">Module 07 · MLOps &amp; Deployment</p>
+    <h1>Ship it — then watch it like a hawk</h1>
+    <p class="stand">APIs, versioning, rollouts, monitoring, and drift: why models quietly rot
+      in production, and how LLM features need the same discipline.</p>
+  </div>
+
+  <article>
+    <ul class="toc">
+      <li><a href="#loop">The production loop</a></li>
+      <li><a href="#serve">Serving a model</a></li>
+      <li><a href="#version">Version everything</a></li>
+      <li><a href="#rollout">Rollouts without heroics</a></li>
+      <li><a href="#monitor">Monitoring &amp; drift</a></li>
+      <li><a href="#llmops">LLMOps extras</a></li>
+      <li><a href="#interview">Interview questions</a></li>
+    </ul>
+
+    <h2 id="loop">The production loop</h2>
+    <pre class="result">train → evaluate → package → deploy → predict
+      ↖—— monitor / collect labels / retrain ——↗</pre>
+    <p>Notebooks are for discovery. Production needs <strong>reproducible training</strong>,
+      a <strong>scorable artifact</strong>, a <strong>serving path</strong>, and
+      <strong>feedback</strong>. If any leg is missing, you don’t have MLOps — you have a demo.</p>
+
+    <h2 id="serve">Serving a model</h2>
+    <ul class="plan-list">
+      <li><strong>Batch</strong> — score overnight tables (reports, campaigns)</li>
+      <li><strong>Online API</strong> — low-latency request/response (fraud check, ranking)</li>
+      <li><strong>Streaming</strong> — events on a bus; score continuously</li>
+    </ul>
+    <p>A minimal online path: serialize model (and preprocessing!) → FastAPI `/score` →
+      validate schema → return score + model version id. Keep preprocessing identical to training.</p>
+    <div class="callout">Training/serving skew is a classic failure: you engineered features in a
+      notebook one way and in the API another. Freeze the pipeline object, or regenerate features
+      from the same code path.</div>
+
+    <h2 id="version">Version everything</h2>
+    <pre class="result">code commit · data snapshot / query · model artifact
+metrics report · prompt text · retrieval index build id</pre>
+    <p>If you can’t answer “which model/prompt served this request?”, you can’t debug or roll
+      back. Log request ids with those versions.</p>
+
+    <h2 id="rollout">Rollouts without heroics</h2>
+    <ul class="plan-list">
+      <li><strong>Shadow</strong> — new model scores in parallel; no user impact</li>
+      <li><strong>Canary</strong> — small % of traffic; compare metrics; promote or revert</li>
+      <li><strong>Blue/green</strong> — two environments; flip traffic when healthy</li>
+    </ul>
+    <p>Same discipline for <em>prompt</em> changes — they are production config, not chat
+      scratchpads.</p>
+
+    <h2 id="monitor">Monitoring &amp; drift</h2>
+    <p>Models rot when the world changes.</p>
+    <ul class="plan-list">
+      <li><strong>Data drift</strong> — input distributions shift</li>
+      <li><strong>Concept drift</strong> — input→label relationship shifts</li>
+      <li><strong>Performance drift</strong> — live metric drops (when labels arrive late,
+        use proxies carefully)</li>
+      <li><strong>Ops signals</strong> — latency, errors, CPU/GPU, queue depth, cost</li>
+    </ul>
+    <p>Alert on schema breaks and sudden null spikes first — they kill more systems than subtle
+      KL-divergence dashboards.</p>
+
+    <h2 id="llmops">LLMOps extras</h2>
+    <ul class="plan-list">
+      <li>Prompt + tool schema versioning</li>
+      <li>Eval harness on every change (offline set)</li>
+      <li>Token/cost budgets and caches</li>
+      <li>Safety filters / PII redaction</li>
+      <li>Retrieval index freshness monitors</li>
+      <li>Trace logs for tool calls (without leaking secrets)</li>
+    </ul>
+    <p>For FraudWatch → FilingPilot: score API first, then a RAG service with citations and an
+      eval CSV you re-run on every prompt/index bump.</p>
+
+    <h2 id="interview">Interview questions</h2>
+    <p class="topic-note">Also in the <a href="interview.html#mlops">interview bank</a>.</p>
+    <div class="qa">
+      <p class="q">How do you know a model is rotting in production?</p>
+      <p class="a">Watch input/prediction distributions, delayed labels or proxies, latency/errors,
+        and business KPIs. Compare to a shadow baseline. For LLMs, also track eval regressions
+        and retrieval quality.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What do you log for a production ML / LLM service?</p>
+      <p class="a">Request id, model/prompt/index versions, latency, token/cost, redacted
+        inputs/outputs, retrieval ids, user feedback.</p>
+    </div>
+    <div class="qa">
+      <p class="q">Why canary a model rollout?</p>
+      <p class="a">Limit blast radius. Compare champion vs challenger on live metrics before
+        full promote — same for prompts.</p>
+    </div>
+    <div class="qa">
+      <p class="q">What is training/serving skew?</p>
+      <p class="a">Features computed differently in training vs production, so the live model
+        sees a different world than it learned. Share one pipeline.</p>
+    </div>
+  </article>
+
+  <nav class="mnav">
+    <a href="module-6.html">← Module 6: Data &amp; Features</a>
+    <a href="module-8.html">Next: System Design →</a>
+  </nav>
+
+  <footer>
+    <p class="foot-mono">AI FROM SCRATCH — MODULE 07</p>
+    <p>Spotted a mistake? Tell me — corrections are the point.
+      <a href="index.html">Back to all modules</a> ·
+      <a href="roadmap.html#phase3">Roadmap Phase 3</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
